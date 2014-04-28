@@ -1,5 +1,5 @@
 <?php
 
 class News extends \Eloquent {
-	protected $fillable = [];
+	protected $fillable = array();
 }
