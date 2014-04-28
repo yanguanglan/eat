@@ -1,0 +1,1 @@
+/Users/lan/Sites/eat/app/views/news/index.blade.php

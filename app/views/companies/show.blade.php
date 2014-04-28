@@ -1,0 +1,1 @@
+/Users/lan/Sites/eat/app/views/companies/show.blade.php
