@@ -17,6 +17,7 @@ class CompaniesTableSeeder extends Seeder {
 					'password'=>Hash::make('password'),
 					'issms'=>$faker->boolean(30),
 					'phone'=>$faker->phoneNumber,
+					'version'=>'v1.0',
 					)
 			);
 		}
