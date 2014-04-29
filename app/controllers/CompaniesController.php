@@ -11,7 +11,7 @@ class CompaniesController extends \BaseController {
 	{
 		//
 		return Response::json(array(
-	        'data' => Company::all()->toJson(),
+	        'data' => Company::all()->toArray(),
 	        'totalCount'=> Company::count()
 		));
 	}
@@ -47,7 +47,7 @@ class CompaniesController extends \BaseController {
 		//
 		$list = Company::find($id);
 		return Response::json(array(
-	        'data' => $list->toJson(),
+	        'data' => $list->toArray(),
 	        'totalCount'=> count($list)
 		));
 

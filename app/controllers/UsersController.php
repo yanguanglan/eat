@@ -6,7 +6,7 @@ class UsersController extends \BaseController {
 	{
 		$list = User::where('co_id', $co_id)->get();
 		return Response::json(array(
-	        'data' => $list->toJson(),
+	        'data' => $list->toArray(),
 	        'totalCount'=> $list->count()
 		));
 	}

@@ -6,7 +6,7 @@ class OrdersController extends \BaseController {
 	{
 		$list = Order::where('co_id', $co_id)->get();
 		return Response::json(array(
-	        'data' => $list->toJson(),
+	        'data' => $list->toArray(),
 	        'totalCount'=> $list->count()
 		));
 	}
@@ -49,7 +49,7 @@ class OrdersController extends \BaseController {
 		$order->save();
 
 		return Response::json(array(
-	        'data' => $order->toJson(),
+	        'data' => $order->toArray(),
 	        'totalCount'=> count($order)
 		));
 	}
