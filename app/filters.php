@@ -35,7 +35,12 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::guest('login');
+	if (Auth::guest()) return Redirect::route('admin.login');
+});
+
+Route::filter('auth.admin', function()
+{
+	if (Auth::check() && Auth::user()->id != 1) return Redirect::route('users.index');
 });
 
 
@@ -78,3 +83,34 @@ Route::filter('csrf', function()
 		throw new Illuminate\Session\TokenMismatchException;
 	}
 });
+
+function logs($co_id, $target, $action, $object_id)
+{
+
+	Logs::create(
+		array(
+			'co_id' => $co_id,
+			'target' => $target,
+			'action' => $action,
+			'object_id' => $object_id,
+		)
+	);
+}
+
+function upload($file, $dir = null)
+{
+		if ($file)
+		{
+			// Generate random dir
+			if ( ! $dir) $dir = str_random(8);
+
+			// Get file info and try to move
+			$destination = public_path() .  '/uploads/' . $dir;
+			$filename    = $file->getClientOriginalName();
+			$path        = '/uploads/' . $dir . '/' . $filename;
+			$uploaded    = $file->move($destination, $filename);
+
+			if ($uploaded) return $path;
+		}
+}
+

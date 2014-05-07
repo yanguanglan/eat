@@ -16,8 +16,8 @@ class CreateDepartmentsTable extends Migration {
 			$table->increments('id');
 			$table->string('name');
 			$table->integer('co_id');
-			$table->datetime('starttime');
-			$table->datetime('endtime');
+			$table->time('starttime');
+			$table->time('endtime');
 			$table->timestamps();
 		});
 	}

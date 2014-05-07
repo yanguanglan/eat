@@ -16,7 +16,7 @@ class CreateNewsTable extends Migration {
 			$table->increments('id');
 			$table->string('title');
 			$table->text('content');
-			$table->datetime('expirationdate');
+			$table->date('expirationdate')->nullable();
 			$table->integer('co_id');
 			$table->integer('user_id');
 			$table->timestamps();

@@ -19,8 +19,8 @@ class CreateUsersTable extends Migration {
 			$table->string('password');
 			$table->string('phone');
 			$table->integer('co_id');
-			$table->string('fingerprint1');
-			$table->string('fingerprint2');
+			$table->string('fingerprint1')->nullable();
+			$table->string('fingerprint2')->nullable();
 			$table->boolean('iswork');
 			$table->timestamps();
 		});

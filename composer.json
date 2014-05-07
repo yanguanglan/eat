@@ -6,7 +6,8 @@
 	"require": {
 		"laravel/framework": "4.1.*",
 		 "fzaninotto/faker" : "dev-master",
-		 "chumper/datatable": "2.*"
+		 "chumper/datatable": "2.*",
+		 "edvinaskrucas/notification": "2.*"
 	},
         "require-dev": {
             "way/generators": "2.*"

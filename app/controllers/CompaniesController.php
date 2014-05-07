@@ -10,10 +10,11 @@ class CompaniesController extends \BaseController {
 	public function index()
 	{
 		//
-		return Response::json(array(
+		return View::make('companies.index')->with('companies', Company::paginate(10));
+		/*return Response::json(array(
 	        'data' => Company::all()->toArray(),
 	        'totalCount'=> Company::count()
-		));
+		));*/
 	}
 
 	/**
@@ -23,7 +24,7 @@ class CompaniesController extends \BaseController {
 	 */
 	public function create()
 	{
-		//
+		return View::make('companies.create');
 	}
 
 	/**
@@ -33,7 +34,32 @@ class CompaniesController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		$validation = Validator::make(
+			Input::all(),
+			array(
+					'name' => 'required',
+					'phone' => 'required',
+					'version' => 'required',
+					'password' => 'required',
+				)		
+			);
+
+		if ($validation->passes())
+		{
+			$company = new Company;
+			$company->name   = Input::get('name');
+			$company->password = Hash::make(Input::get('password'));
+			$company->phone = Input::get('phone');
+			$company->issms    = Input::get('issms') ? Input::get('issms') : 0;
+			$company->version = Input::get('version');
+			$company->save();
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('companies.edit', $company->id);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation->messages());
 	}
 
 	/**
@@ -45,11 +71,12 @@ class CompaniesController extends \BaseController {
 	public function show($id)
 	{
 		//
-		$list = Company::find($id);
-		return Response::json(array(
-	        'data' => $list->toArray(),
-	        'totalCount'=> count($list)
-		));
+		return View::make('companies.show')->with('company',Company::find($id));
+		//$list = Company::find($id);
+		// return Response::json(array(
+	 //        'data' => array($list->toArray()),
+	 //        'totalCount'=> count($list)
+		// ));
 
 	}
 
@@ -62,6 +89,7 @@ class CompaniesController extends \BaseController {
 	public function edit($id)
 	{
 		//
+		return View::make('companies.edit')->with('company', Company::find($id));
 	}
 
 	/**
@@ -73,6 +101,33 @@ class CompaniesController extends \BaseController {
 	public function update($id)
 	{
 		//
+		$validation = Validator::make(
+			Input::all(),
+			array(
+					'name' => 'required',
+					'phone' => 'required',
+					'version' => 'required',
+				)		
+			);
+
+		if ($validation->passes())
+		{
+			$company = Company::find($id);
+			$company->name   = Input::get('name');
+			$company->phone    = Input::get('phone');
+			$company->issms    = Input::get('issms') ? Input::get('issms') : 0;
+			$company->version = Input::get('version');
+			$company->save();
+
+			#更新管理员信息
+			logs($id, 'company', 'U', $id);
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('companies.edit', $company->id);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation->messages());
 	}
 
 	/**
@@ -84,6 +139,12 @@ class CompaniesController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+		$company = Company::find($id);
+		$company->delete();
+
+		Notification::success('删除成功！');
+
+		return Redirect::route('companies.index');
 	}
 
 }

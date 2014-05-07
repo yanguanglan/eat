@@ -19,6 +19,7 @@ class CreateCompaniesTable extends Migration {
 			$table->boolean('issms');
 			$table->string('phone');
 			$table->string('version');
+			$table->string('remember_token')->nullable();
 			$table->timestamps();
 		});
 	}

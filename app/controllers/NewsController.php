@@ -2,7 +2,7 @@
 
 class NewsController extends \BaseController {
 
-	public function newslist($co_id)
+	public function newsList($co_id)
 	{
 		$list = News::where('co_id', $co_id)->get();
 		return Response::json(array(
@@ -21,6 +21,7 @@ class NewsController extends \BaseController {
 	public function index()
 	{
 		//
+		return View::make('news.index')->with('news', News::where('co_id', Auth::user()->id)->paginate(10));
 	}
 
 	/**
@@ -31,6 +32,7 @@ class NewsController extends \BaseController {
 	public function create()
 	{
 		//
+		return View::make('news.create');
 	}
 
 	/**
@@ -41,6 +43,34 @@ class NewsController extends \BaseController {
 	public function store()
 	{
 		//
+		$validation = Validator::make(
+			Input::all(),
+			array(
+					'title' => 'required',
+					'content' => 'required',				)		
+			);
+
+		if ($validation->passes())
+		{
+			$new = new News;
+			$new->title   = Input::get('title');
+			$new->content = Input::get('content');
+			if (Input::get('expirationdate')) {
+				$new->expirationdate = Input::get('expirationdate');
+			}
+			$new->co_id = Auth::user()->id;
+			$new->user_id = 0;
+			$new->save();
+
+			#新增通知
+			logs(Auth::user()->id, 'news', 'I', $new->id);
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('news.edit', $new->id);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation->messages());
 	}
 
 	/**
@@ -52,6 +82,7 @@ class NewsController extends \BaseController {
 	public function show($id)
 	{
 		//
+		return View::make('news.show')->with('new', News::find($id));
 	}
 
 	/**
@@ -63,6 +94,7 @@ class NewsController extends \BaseController {
 	public function edit($id)
 	{
 		//
+		return View::make('news.edit')->with('new', News::find($id));
 	}
 
 	/**
@@ -74,6 +106,34 @@ class NewsController extends \BaseController {
 	public function update($id)
 	{
 		//
+		$validation = Validator::make(
+			Input::all(),
+			array(
+					'title' => 'required',
+					'content' => 'required',
+				)		
+			);
+
+		if ($validation->passes())
+		{
+			$new = News::find($id);
+			$new->title   = Input::get('title');
+			$new->content    = Input::get('content');
+			if (Input::get('expirationdate')) {
+				$new->expirationdate = Input::get('expirationdate');
+			}
+
+			$new->save();
+
+			#修改通知
+			logs(Auth::user()->id, 'news', 'U', $id);
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('news.edit', $new->id);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation->messages());
 	}
 
 	/**
@@ -85,6 +145,15 @@ class NewsController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+		$new = News::find($id);
+		$new->delete();
+
+		#删除通知
+		logs(Auth::user()->id, 'news', 'D', $id);
+
+		Notification::success('删除成功！');
+
+		return Redirect::route('news.index');
 	}
 
 }

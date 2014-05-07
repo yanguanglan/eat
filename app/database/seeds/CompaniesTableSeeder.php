@@ -18,7 +18,7 @@ class CompaniesTableSeeder extends Seeder {
 					'issms'=>$faker->boolean(30),
 					'phone'=>$faker->phoneNumber,
 					'version'=>'v1.0',
-					)
+					'remember_token'=>'',					)
 			);
 		}
 	}

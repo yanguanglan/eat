@@ -2,7 +2,7 @@
 
 class OrdersController extends \BaseController {
 
-	public function orderlist($co_id)
+	public function orderList($co_id)
 	{
 		$list = Order::where('co_id', $co_id)->get();
 		return Response::json(array(
@@ -19,6 +19,8 @@ class OrdersController extends \BaseController {
 	public function index()
 	{
 		//
+		return View::make('orders.index')->with('orders', Order::where('co_id', Auth::user()->id)->paginate(10));
+
 	}
 
 	/**
@@ -29,6 +31,7 @@ class OrdersController extends \BaseController {
 	public function create()
 	{
 		//
+		return View::make('orders.create');
 	}
 
 	/**
@@ -38,8 +41,40 @@ class OrdersController extends \BaseController {
 	 */
 	public function store()
 	{
+
+		$validation = Validator::make(
+			Input::all(),
+			array(
+					'breakfast' => 'required',
+					'lunch' => 'required',	
+					'dinner' => 'required',			)		
+			);
+
+		if ($validation->passes())
+		{
+			$order = new Order();
+			$order->co_id = Auth::user()->id;
+			$order->user_id = Input::get('user_id');
+			$order->breakfast = Input::get('breakfast');
+			$order->lunch = Input::get('lunch');
+			$order->dinner = Input::get('dinner');
+			$order->issms = Input::get('issms') ? Input::get('issms') : 0;
+			$order->save();
+
+			#新增订餐
+			logs(Auth::user()->id, 'order', 'I', $order->id);
+
+			Notification::success('保存成功！');
+
+
+
+			return Redirect::route('orders.edit', $order->id);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation->messages());
+
 		//
-		$order = new Order();
+		/*$order = new Order();
 		$order->co_id = Input::get('co_id');
 		$order->user_id = Input::get('user_id');
 		$order->breakfast = Input::get('breakfast');
@@ -51,7 +86,25 @@ class OrdersController extends \BaseController {
 		return Response::json(array(
 	        'data' => $order->toArray(),
 	        'totalCount'=> count($order)
-		));
+		));*/
+	}
+
+	public function postOrder($co_id)
+	{
+			$order = new Order();
+			$order->co_id = $co_id;
+			$order->user_id = Input::get('user_id');
+			$order->breakfast = Input::get('breakfast');
+			$order->lunch = Input::get('lunch');
+			$order->dinner = Input::get('dinner');
+			$order->issms = Input::get('issms');
+			$order->save();
+
+			$list = Order::find($order->id);
+			return Response::json(array(
+		        'data' => array($list->toArray()),
+		        'totalCount'=> count($list)
+			));	
 	}
 
 	/**
@@ -63,6 +116,7 @@ class OrdersController extends \BaseController {
 	public function show($id)
 	{
 		//
+		return View::make('orders.show')->with('order', Order::find($id));
 	}
 
 	/**
@@ -73,7 +127,8 @@ class OrdersController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		//	
+		return View::make('orders.edit')->with('order', Order::find($id));
 	}
 
 	/**
@@ -85,6 +140,34 @@ class OrdersController extends \BaseController {
 	public function update($id)
 	{
 		//
+
+		$validation = Validator::make(
+			Input::all(),
+			array(
+					'breakfast' => 'required',
+					'lunch' => 'required',	
+					'dinner' => 'required',			)		
+			);
+
+		if ($validation->passes())
+		{
+			$order = Order::find($id);
+			$order->breakfast = Input::get('breakfast');
+			$order->lunch = Input::get('lunch');
+			$order->dinner = Input::get('dinner');
+			$order->issms = Input::get('issms') ? Input::get('issms') : 0;
+			$order->save();
+
+			#修改订餐
+			logs(Auth::user()->id, 'order', 'U', $id);
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('orders.edit', $order->id);
+		}
+
+		return Redirect::back()->withInput()->withErrors($validation->messages());
+
 	}
 
 	/**
@@ -96,6 +179,15 @@ class OrdersController extends \BaseController {
 	public function destroy($id)
 	{
 		//
+		$order = Order::find($id);
+		$order->delete();
+
+		#删除订餐
+		logs(Auth::user()->id, 'order', 'D', $id);
+
+		Notification::success('删除成功！');
+
+		return Redirect::route('orders.index');
 	}
 
 }

@@ -121,6 +121,7 @@ return array(
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
 		'Chumper\Datatable\DatatableServiceProvider',
+		'Krucas\Notification\NotificationServiceProvider',
 	),
 
 	/*
@@ -187,6 +188,7 @@ return array(
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
 		'Datatable'       => 'Chumper\Datatable\Facades\DatatableFacade',
+		'Notification' => 'Krucas\Notification\Facades\Notification',
 
 	),
 
