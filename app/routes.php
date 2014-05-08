@@ -26,6 +26,9 @@ Route::get('auth/logout', function(){
 
 Route::group(array('before'=>'auth.user'), function()
 {
+	Route::get('user/profile', array('as'=>'user.profile', 'uses'=>'UsersController@getUserProfile'));
+	Route::post('user/profile', array('as'=>'user.profile.post', 'uses'=>'UsersController@postUserProfile'));
+
 	Route::get('user/order/{co_id}', array('as'=>'user.order', 'uses'=>'OrdersController@getUserOrder'));
 	Route::post('user/order', array('as'=>'user.order.post', 'uses'=>'OrdersController@postUserOrder'));
 });

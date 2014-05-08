@@ -11,7 +11,7 @@
 	<div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="navbar-inner">
 		<div class="container">
-			<a class="brand" href="">在线订餐</a>
+			<a class="brand" href="@if(Session::has('user_id')) {{ URL::route('user.order', Session::get('co_id')) }} @endif">在线订餐</a>
 
 @if(Session::has('user_id'))
 	<ul class="nav">
@@ -21,6 +21,9 @@
 			{{ Session::get('name') }}
 		</a>
 		<ul class="dropdown-menu pull-right">
+			<li>
+				<a href="{{ URL::route('user.profile') }}">修改密码</a>
+			</li>
 			<li>
 				<a href="{{ URL::to('auth/logout') }}">退出</a>
 			</li>		

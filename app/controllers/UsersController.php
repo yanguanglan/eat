@@ -74,6 +74,44 @@ class UsersController extends \BaseController {
 
 	}
 
+	public function getUserProfile()
+	{
+		return View::make('users.profile')->with('user', User::find(Session::get('user_id')));
+	}
+
+	public function postUserProfile()
+	{
+		$validation = Validator::make(
+			Input::all(),
+			array(
+				    'phone' => 'required',
+				   )		
+			);
+
+		if ($validation->passes())
+		{
+
+			$user = User::find(Session::get('user_id'));
+			$user->phone = Input::get('phone');
+			if (Input::get('password'))
+			{
+				$user->password = Hash::make(Input::get('password'));
+			}
+			$user->save();
+
+			#更新管理员信息
+			logs(Session::get('co_id'), 'user', 'U', $user->id);
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('user.profile');
+
+	    } 
+
+	    return Redirect::back()->withInput()->withErrors($validation->messages());
+
+	}
+
 	public function postLogin()
 	{
 		$user = array(
@@ -154,7 +192,7 @@ class UsersController extends \BaseController {
 			$user->co_id   = Auth::user()->id;
 			$user->sn   = Input::get('sn');
 			$user->name   = Input::get('name');
-			$user->password = Hash::make(111111);
+			$user->password = Hash::make('111111');
 			$user->phone = Input::get('phone');
 			$user->iswork    = Input::get('iswork') ? Input::get('iswork') : 0;
 			$user->save();
