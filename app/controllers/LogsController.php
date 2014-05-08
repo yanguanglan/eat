@@ -2,10 +2,10 @@
 
 class LogsController extends \BaseController {
 
-	public function logList($co_id, $time)
+	public function logList($co_id, $log_id)
 	{
 		//
-		$list = Logs::where('co_id', $co_id)->where('created_at', '>', $time)->get();
+		$list = Logs::where('co_id', $co_id)->where('id', '>', $log_id)->get();
 		return Response::json(array(
 	        'data' => $list->toArray(),
 	        'totalCount'=> $list->count()

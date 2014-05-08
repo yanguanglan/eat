@@ -51,12 +51,45 @@ Route::group(array('prefix' => 'api'), function()
 		));
 	});
 
+	Route::get('users/{user_id}', function($user_id){
+		$list = User::find($user_id);
+		return Response::json(array(
+	        'data' => array($list->toArray()),
+	        'totalCount'=> count($list)
+		));
+	});
+
+	Route::get('news/{news_id}', function($news_id){
+		$list = News::find($news_id);
+		return Response::json(array(
+	        'data' => array($list->toArray()),
+	        'totalCount'=> count($list)
+		));
+	});
+
+	Route::get('orders/{user_id}', function($user_id){
+		$today = date('Y-m-d 00:00:00', time());
+		$list = Order::where('user_id', $user_id)->where('created_at', '>', $today)->first();
+		return Response::json(array(
+	        'data' => array($list->toArray()),
+	        'totalCount'=> count($list)
+		));
+	});
+
+	Route::get('departments/{department_id}', function($department_id){
+		$list = Department::find($department_id);
+		return Response::json(array(
+	        'data' => array($list->toArray()),
+	        'totalCount'=> count($list)
+		));
+	});
+
 	Route::get('loglist/{co_id}', array('as'=>'loglist', 'uses'=>'LogsController@logList'));
 	Route::get('userlist/{co_id}', array('as' => 'userlist', 'uses' => 'UsersController@userList'));
 	Route::get('departmentlist/{co_id}', array('as' => 'departmentlist', 'uses' => 'DepartmentsController@departmentList'));
 	Route::get('newslist/{co_id}', array('as' => 'newslist', 'uses' => 'NewsController@newsList'));
 	Route::get('orderlist/{co_id}', array('as' => 'orderlist', 'uses' => 'OrdersController@orderList'));
-	Route::get('loglist/{co_id}/{time}', array('as'=> 'loglist', 'uses'=>'LogsController@logList'));
+	Route::get('loglist/{co_id}/{log_id}', array('as'=> 'loglist', 'uses'=>'LogsController@logList'));
 	Route::post('postfingerprint/{user_id}', array('as'=>'postfingerprint', 'uses'=>'UsersController@postFingerprint'));
 	Route::post('postorder/{co_id}', array('as'=>'postorder', 'uses'=>'OrdersController@postOrder'));
 });
