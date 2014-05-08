@@ -150,7 +150,7 @@ class UsersController extends \BaseController {
 
 		if ($validation->passes())
 		{
-			$user = new user;
+			$user = new User;
 			$user->co_id   = Auth::user()->id;
 			$user->sn   = Input::get('sn');
 			$user->name   = Input::get('name');
