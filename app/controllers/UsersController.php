@@ -7,6 +7,32 @@ class UsersController extends \BaseController {
 		return View::make('login');
 	}
 
+	public function getUserLogin($co_id)
+	{
+		if (Company::find($co_id)) {
+			return View::make('users.login');
+		}
+	}
+
+	public function postUserLogin($co_id)
+	{
+		$user = User::where('co_id', $co_id)->where('sn', Input::get('sn'))->first();
+		if(isset($user->id)) {
+
+			if (Hash::check(Input::get('password'), $user->password))
+			{
+			    //写session
+			    Session::put('user_id', $user->id);
+			    Session::put('name', $user->name);
+			    Session::put('co_id', $co_id);
+
+			    return Redirect::route('user.order', $co_id); 
+			}
+		}
+
+		return Redirect::back()->withInput()->withErrors(array('login' => '登录失败，请检查你填写的信息是否正确！'));
+	}
+
 	public function getProfile()
 	{
 		return View::make('profile')->with('company', Company::find(Auth::user()->id));

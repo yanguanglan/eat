@@ -84,6 +84,11 @@ Route::filter('csrf', function()
 	}
 });
 
+Route::filter('auth.user', function()
+{
+	if (!Session::has('user_id')) return Redirect::to('auth/login/'.Route::input('co_id'));
+});
+
 function logs($co_id, $target, $action, $object_id)
 {
 

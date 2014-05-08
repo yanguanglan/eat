@@ -16,6 +16,20 @@ Route::get('/', array('as'=>'home',function()
 	return View::make('hello');
 }));
 
+Route::get('auth/login/{co_id}', array('as'=>'user.login', 'uses'=>'UsersController@getUserLogin'));
+Route::post('auth/login/{co_id}', array('as'=>'user.login.post', 'uses'=>'UsersController@postUserLogin'));
+Route::get('auth/logout', function(){
+	$co_id = Session::get('co_id');
+	Session::flush();
+	return Redirect::route('user.login', $co_id);
+});
+
+Route::group(array('before'=>'auth.user'), function()
+{
+	Route::get('user/order/{co_id}', array('as'=>'user.order', 'uses'=>'OrdersController@getUserOrder'));
+	Route::post('user/order', array('as'=>'user.order.post', 'uses'=>'OrdersController@postUserOrder'));
+});
+
 Route::get('admin/logout', array('as'=>'admin.logout', 'uses'=>'UsersController@getLogout'));
 Route::get('admin/login', array('as'=>'admin.login', 'uses'=>'UsersController@getLogin'));
 Route::post('admin/login', array('as'=>'admin.login.post', 'uses'=>'UsersController@postLogin'));

@@ -11,6 +11,82 @@ class OrdersController extends \BaseController {
 		));
 	}
 
+	public function getUserOrder($co_id)
+	{	
+		$today = date('Y-m-d 00:00:00', time());
+		$order = Order::where('user_id', Session::get('user_id'))->where('created_at', '>', $today)->first();
+		if(isset($order->id)) {
+			return View::make('orders.userorder.edit')->with('order', $order);
+		}
+		return View::make('orders.userorder.create');
+	}
+
+	public function postUserOrder()
+	{
+		$today = date('Y-m-d 00:00:00', time());
+		$order = Order::where('user_id', Session::get('user_id'))->where('created_at', '>', $today)->first();
+		if($order) {
+			#edit
+			$validation = Validator::make(
+			Input::all(),
+			array(
+					'breakfast' => 'required|numeric',
+					'lunch' => 'required|numeric',	
+					'dinner' => 'required|numeric',			)		
+			);
+
+		if ($validation->passes())
+		{
+			$order->breakfast = Input::get('breakfast');
+			$order->lunch = Input::get('lunch');
+			$order->dinner = Input::get('dinner');
+			$order->issms = Input::get('issms') ? Input::get('issms') : 0;
+			$order->save();
+
+			#修改订餐
+			logs(Session::get('co_id'), 'order', 'U', $order->id);
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('user.order', Session::get('co_id'));
+		}
+
+		    return Redirect::back()->withInput()->withErrors($validation->messages());
+
+		}
+
+		$order = new Order;
+		#add
+				$validation = Validator::make(
+			Input::all(),
+			array(
+					'breakfast' => 'required|numeric',
+					'lunch' => 'required|numeric',	
+					'dinner' => 'required|numeric',			)		
+			);
+
+		if ($validation->passes())
+		{
+			$order->co_id = Session::get('co_id');
+			$order->user_id = Session::get('user_id');
+			$order->breakfast = Input::get('breakfast');
+			$order->lunch = Input::get('lunch');
+			$order->dinner = Input::get('dinner');
+			$order->issms = Input::get('issms') ? Input::get('issms') : 0;
+			$order->save();
+
+			#修改订餐
+			logs(Session::get('co_id'), 'order', 'I', $order->id);
+
+			Notification::success('保存成功！');
+
+			return Redirect::route('user.order', Session::get('co_id'));
+		}
+
+		    return Redirect::back()->withInput()->withErrors($validation->messages());
+
+	}
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -65,8 +141,6 @@ class OrdersController extends \BaseController {
 			logs(Auth::user()->id, 'order', 'I', $order->id);
 
 			Notification::success('保存成功！');
-
-
 
 			return Redirect::route('orders.edit', $order->id);
 		}
