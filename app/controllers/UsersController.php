@@ -252,7 +252,7 @@ class UsersController extends \BaseController {
 
 		if ($validation->passes())
 		{
-			$user = user::find($id);
+			$user = User::find($id);
 			$user->sn   = Input::get('sn');
 			$user->name   = Input::get('name');
 			$user->phone    = Input::get('phone');
@@ -274,7 +274,7 @@ class UsersController extends \BaseController {
 
 	public function postFingerprint($user_id)
 	{
-			$user = user::find($user_id);
+			$user = User::find($user_id);
 
 			if (Input::hasFile('fingerprint1') && Input::hasFile('fingerprint2'))
 			{
