@@ -20,6 +20,7 @@ class CreateOrdersTable extends Migration {
 			$table->integer('lunch');
 			$table->integer('dinner');
 			$table->boolean('issms');
+			$table->timestamp('worked_at')->nullable();
 			$table->timestamps();
 		});
 	}

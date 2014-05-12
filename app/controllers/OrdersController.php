@@ -2,6 +2,64 @@
 
 class OrdersController extends \BaseController {
 
+	public function getToday()
+	{
+		$today = date('Y-m-d 00:00:00', time());
+
+		$order = Order::where('co_id', Auth::user()->id)->where('created_at', '>', $today)->get();
+
+		$breakfast = $order->sum('breakfast');
+		$lunch = $order->sum('lunch');
+        $dinner = $order->sum('dinner');
+
+		return View::make('orders.today')->with('breakfast', $breakfast)->with('lunch', $lunch)->with('dinner', $dinner);
+	}
+
+	public function getTodayList()
+	{
+		$today = date('Y-m-d 00:00:00', time());
+
+		$orders = Order::where('co_id', Auth::user()->id)->where('created_at', '>', $today)->paginate(10);
+
+		return View::make('orders.todaylist')->with('orders', $orders);
+	}
+
+	public function searchList()
+	{
+		if(Input::get('keyword')) {
+			$today_start = date(Input::get('keyword')." 00:00:00", strtotime(Input::get('keyword')));
+			$today_end = date(Input::get('keyword')." 23:59:59", strtotime(Input::get('keyword')));
+			$today = Input::get('keyword');
+		} else {
+			$today_start = date('Y-m-d 00:00:00', time());
+			$today_end = date('Y-m-d 23:59:59', time());
+			$today = date('Y-m-d', time());
+		}
+
+		$morning = $afternoon = array();
+		
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '<', $today_end)->orderBy('worked_at', 'desc')->get();
+		foreach ($order as $value) {
+			if (date('H:i:s', strtotime($value->created_at)) < '12:00:00') {
+				$morning[$value->user->id] = $value;
+		    }
+		}
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '>', $today_end)->orderBy('worked_at', 'asc')->get();
+		foreach ($order as $value) {
+			if (date('H:i:s', strtotime($value->created_at)) >= '12:00:00') {
+				$afternoon[$value->user->id] = $value;
+		    }
+		}
+
+		//用户
+		$user = User::where('co_id', Auth::user()->id)->get();
+
+		//班次
+		$department = Department::where('co_id', Auth::user()->id)->get();
+
+		return View::make('orders.search')->with('today', $today)->with('users', $user)->with('department', $department)->with('morning', $morning)->with('afternoon', $afternoon);
+	}
+
 	public function orderList($co_id)
 	{
 		$list = Order::where('co_id', $co_id)->get();
@@ -172,6 +230,7 @@ class OrdersController extends \BaseController {
 			$order->lunch = Input::get('lunch');
 			$order->dinner = Input::get('dinner');
 			$order->issms = Input::get('issms');
+			$order->worked_at = time();
 			$order->save();
 
 			$list = Order::find($order->id);

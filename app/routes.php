@@ -44,6 +44,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::resource('orders', 'OrdersController');
 	Route::get('admin/profile', array('as'=>'admin.profile', 'uses'=>'UsersController@getProfile'));
 	Route::post('admin/profile', array('as'=>'admin.profile.post', 'uses'=>'UsersController@postProfile'));
+	Route::get('order/search', array('as'=>'order.search', 'uses'=>'OrdersController@searchList'));
+	Route::post('order/search', array('as'=>'order.search.post', 'uses'=>'OrdersController@searchList'));
+	Route::get('order/today', array('as'=>'order.today', 'uses'=>'OrdersController@getToday'));
+	Route::get('order/todaylist', array('as'=>'order.todaylist', 'uses'=>'OrdersController@getTodayList'));
 });
 Route::group(array('before' => 'auth.admin'), function()
 {
