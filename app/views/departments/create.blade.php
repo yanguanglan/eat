@@ -19,14 +19,14 @@
 		<div class="control-group">
 			{{ Form::label('starttime', '上班时间') }}
 			<div class="controls">
-				{{ Form::input('time', 'starttime', null, ['class' => 'form-control', 'placeholder' => 'Time']) }}
+				{{ Form::input('time', 'starttime', null, array('class' => 'form-control', 'placeholder' => 'Time')) }}
 			</div>
 		</div>
 
 		<div class="control-group">
 			{{ Form::label('endtime', '下班时间') }}
 			<div class="controls">
-				{{ Form::input('time', 'endtime', null, ['class' => 'form-control', 'placeholder' => 'Time']) }}			</div>
+				{{ Form::input('time', 'endtime', null, array('class' => 'form-control', 'placeholder' => 'Time')) }}			</div>
 		</div>
 
 		<div class="form-actions">

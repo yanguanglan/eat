@@ -25,7 +25,7 @@
 		<div class="control-group">
 			{{ Form::label('expirationdate', '有效期') }}
 			<div class="controls">
-				{{ Form::input('date', 'expirationdate', $new->expirationdate, ['class' => 'form-control', 'placeholder' => 'Date']) }}
+				{{ Form::input('date', 'expirationdate', $new->expirationdate, array('class' => 'form-control', 'placeholder' => 'Date')) }}
 			</div>
 		</div>
 
