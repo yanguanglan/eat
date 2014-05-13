@@ -185,6 +185,8 @@ class UsersController extends \BaseController {
 					'name' => 'required',
 					'phone' => 'required',				)		
 			);
+        
+        $count = User::where('co_id', Auth::user()->id)->count();
 
 		if ($validation->passes())
 		{
@@ -195,6 +197,7 @@ class UsersController extends \BaseController {
 			$user->password = Hash::make('111111');
 			$user->phone = Input::get('phone');
 			$user->iswork    = Input::get('iswork') ? Input::get('iswork') : 0;
+			$user->fingerprint1 = $count + 1;
 			$user->save();
 
 			#新增员工
