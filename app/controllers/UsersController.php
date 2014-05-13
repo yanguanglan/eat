@@ -278,8 +278,10 @@ class UsersController extends \BaseController {
 
 			if (Input::hasFile('fingerprint1') && Input::hasFile('fingerprint2'))
 			{
-				$user->fingerprint1 = Image::upload(Input::file('fingerprint1'), 'fingerprint1/' . $user->id);
-				$user->fingerprint2 = Image::upload(Input::file('fingerprint2'), 'fingerprint2/' . $user->id);
+				$user->fingerprint1 = Input::get('fingerprint1');
+				$user->fingerprint2 = Input::get('fingerprint2');
+				//$user->fingerprint1 = Image::upload(Input::file('fingerprint1'), 'fingerprint1/' . $user->id);
+				//$user->fingerprint2 = Image::upload(Input::file('fingerprint2'), 'fingerprint2/' . $user->id);
 				$user->save();
 			}
 
