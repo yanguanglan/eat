@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder {
 					'password'=>Hash::make('password'),
 					'phone'=>$faker->phoneNumber,
 					'co_id'=> $Company->id,
-					'fingerprint1'=>$faker->ean8,
+					'fingerprint1'=>$index,
 					'fingerprint2'=>$faker->uuid,
 					'iswork'=>$faker->boolean(75),
 				));
