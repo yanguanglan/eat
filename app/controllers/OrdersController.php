@@ -291,16 +291,22 @@ class OrdersController extends \BaseController {
 	{
 			if ($order_id) {
 				$order = Order::find($order_id);
+				$order->co_id = $co_id;
+				$order->user_id = Input::get('user_id');
+				$order->breakfast = Input::get('breakfast');
+				$order->lunch = Input::get('lunch');
+				$order->dinner = Input::get('dinner');
+				$order->issms = Input::get('issms');
 			} else {
 				$order = new Order();
+				$order->co_id = $co_id;
+				$order->user_id = Input::get('user_id');
+				$order->breakfast = Input::get('breakfast');
+				$order->lunch = Input::get('lunch');
+				$order->dinner = Input::get('dinner');
+				$order->issms = Input::get('issms');
+				$order->worked_at = Input::get('worked_at');
 			}
-			$order->co_id = $co_id;
-			$order->user_id = Input::get('user_id');
-			$order->breakfast = Input::get('breakfast');
-			$order->lunch = Input::get('lunch');
-			$order->dinner = Input::get('dinner');
-			$order->issms = Input::get('issms');
-			$order->worked_at = Input::get('worked_at');
 			$order->save();
 
 			$list = Order::find($order->id);
