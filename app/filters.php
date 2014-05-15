@@ -127,12 +127,12 @@ function upload($file, $dir = null)
 function punch($today, $department)
 {	
 	$re = 0;
-   /* $now = date('H:i:s', strtotime($today));
+    $now = date('H:i:s', strtotime($today));
     foreach ($department as $value) {
     	if ($now > $value->starttime and $now < $value->endtime) {
     		$re = 1;
     		break;
     	}
-    }*/
+    }
     return $re;
 }
