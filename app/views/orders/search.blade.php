@@ -27,8 +27,8 @@
 					<td>{{ $user->id }}</td>
 					<td>{{ $user->sn }}</td>
 					<td>{{ $user->name }}</td>
-					<td>@if (isset($morning[$user->id])) @if (punch($morning[$user->id]->created_at, $department)) <span class="label label-warning">{{ $morning[$user->id]->created_at }}</span> @else {{ $morning[$user->id]->created_at }} @endif @else 未打卡 @endif</td>
-					<td>@if (isset($afternoon[$user->id])) @if (punch($afternoon[$user->id]->created_at, $department)) <span class="label label-warning">{{ $afternoon[$user->id]->created_at }}</span> @else {{ $afternoon[$user->id]->created_at }} @endif @else 未打卡 @endif</td>
+					<td>@if (isset($morning[$user->id])) @if (punch($morning[$user->id]->worked_at, $department)) <span class="label label-warning">{{ $morning[$user->id]->worked_at }}</span> @else {{ $morning[$user->id]->worked_at }} @endif @else 未打卡 @endif</td>
+					<td>@if (isset($afternoon[$user->id])) @if (punch($afternoon[$user->id]->worked_at, $department)) <span class="label label-warning">{{ $afternoon[$user->id]->worked_at }}</span> @else {{ $afternoon[$user->id]->worked_at }} @endif @else 未打卡 @endif</td>
 				</tr>
 			@endforeach
 		</tbody>

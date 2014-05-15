@@ -24,6 +24,19 @@ Route::get('auth/logout', function(){
 	return Redirect::route('user.login', $co_id);
 });
 
+Route::group(array('before' => 'auth.mobile'), function()
+{
+	Route::get('mobile/order/search', array('as'=>'mobile.order.search', 'uses'=>'OrdersController@searchListMobile'));
+	Route::post('mobile/order/search', array('as'=>'mobile.order.search.post', 'uses'=>'OrdersController@searchListMobile'));
+});
+
+Route::get('mobile/order/today/{co_id}', array('as'=>'mobile.order.today', 'uses'=>'OrdersController@getTodayMobile'));
+Route::get('mobile/order/todaylist/{co_id}', array('as'=>'mobile.order.todaylist', 'uses'=>'OrdersController@getTodayListMobile'));
+
+Route::get('auth/admin/logout', array('as'=>'user.admin.logout', 'uses'=>'UsersController@getAdminLogout'));
+Route::get('auth/admin/login', array('as'=>'user.admin.login', 'uses'=>'UsersController@getAdminLogin'));
+Route::post('auth/admin/login', array('as'=>'user.admin.login.post', 'uses'=>'UsersController@postAdminLogin'));
+
 Route::group(array('before'=>'auth.user'), function()
 {
 	Route::get('user/profile', array('as'=>'user.profile', 'uses'=>'UsersController@getUserProfile'));
@@ -105,7 +118,6 @@ Route::group(array('prefix' => 'api'), function()
 		));
 	});
 
-	Route::get('loglist/{co_id}', array('as'=>'loglist', 'uses'=>'LogsController@logList'));
 	Route::get('userlist/{co_id}', array('as' => 'userlist', 'uses' => 'UsersController@userList'));
 	Route::get('departmentlist/{co_id}', array('as' => 'departmentlist', 'uses' => 'DepartmentsController@departmentList'));
 	Route::get('newslist/{co_id}', array('as' => 'newslist', 'uses' => 'NewsController@newsList'));

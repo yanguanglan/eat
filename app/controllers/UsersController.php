@@ -14,6 +14,34 @@ class UsersController extends \BaseController {
 		}
 	}
 
+	public function getAdminLogin()
+	{
+		return View::make('adminlogin');
+	}
+
+	public function postAdminLogin()
+	{
+		$user = array(
+			'name'    => Input::get('name'),
+			'password' => Input::get('password')
+		);
+
+			if (Auth::attempt($user)) 
+			{	
+			    return Redirect::route('mobile.order.search');
+			}
+			else
+			{   
+				return Redirect::route('user.admin.login')->withErrors(array('login' => '登录失败，请检查你填写的信息是否正确！'));
+		    }
+	}
+
+	public function getAdminLogout()
+	{
+		Auth::logout();
+		return Redirect::route('user.admin.login');
+	}
+
 	public function postUserLogin($co_id)
 	{
 		$user = User::where('co_id', $co_id)->where('sn', Input::get('sn'))->first();
@@ -99,13 +127,14 @@ class UsersController extends \BaseController {
 			}
 			$user->save();
 
+			Session::flash('success', '修改资料成功!');
+
 			#更新管理员信息
 			logs(Session::get('co_id'), 'user', 'U', $user->id);
 
-			Notification::success('保存成功！');
-
-			return Redirect::route('user.profile');
-
+			
+			return Redirect::route('user.order', Session::get('co_id')); 
+			#return Redirect::route('user.profile');
 	    } 
 
 	    return Redirect::back()->withInput()->withErrors($validation->messages());

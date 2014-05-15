@@ -38,6 +38,11 @@ Route::filter('auth', function()
 	if (Auth::guest()) return Redirect::route('admin.login');
 });
 
+Route::filter('auth.mobile', function()
+{
+	if (Auth::guest()) return Redirect::route('user.admin.login');
+});
+
 Route::filter('auth.admin', function()
 {
 	if (Auth::check() && Auth::user()->id != 1) return Redirect::route('users.index');

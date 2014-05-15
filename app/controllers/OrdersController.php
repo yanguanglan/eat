@@ -24,6 +24,36 @@ class OrdersController extends \BaseController {
 		return View::make('orders.todaylist')->with('orders', $orders);
 	}
 
+	public function getTodayMobile($co_id)
+	{
+		$today = date('Y-m-d 00:00:00', time());
+
+		$order = Order::where('co_id', $co_id)->where('created_at', '>', $today)->get();
+
+		$breakfast = $order->sum('breakfast');
+		$lunch = $order->sum('lunch');
+        $dinner = $order->sum('dinner');
+        $week = array(
+			'0' => '周日',
+			'1' => '周一',
+			'2' => '周二',
+			'3' => '周三',
+			'4' => '周四',
+			'5' => '周五',
+			'6' => '周六',
+		);
+		return View::make('orders.todaymobile')->with('breakfast', $breakfast)->with('lunch', $lunch)->with('dinner', $dinner)->with('week', $week);
+	}
+
+	public function getTodayListMobile($co_id)
+	{
+		$today = date('Y-m-d 00:00:00', time());
+
+		$orders = Order::where('co_id', $co_id)->where('created_at', '>', $today)->get();
+
+		return View::make('orders.todaylistmobile')->with('orders', $orders);
+	}
+
 	public function searchList()
 	{
 		if(Input::get('keyword')) {
@@ -60,6 +90,42 @@ class OrdersController extends \BaseController {
 		return View::make('orders.search')->with('today', $today)->with('users', $user)->with('department', $department)->with('morning', $morning)->with('afternoon', $afternoon);
 	}
 
+	public function searchListMobile()
+	{
+		if(Input::get('keyword')) {
+			$today_start = date(Input::get('keyword')." 00:00:00", strtotime(Input::get('keyword')));
+			$today_end = date(Input::get('keyword')." 23:59:59", strtotime(Input::get('keyword')));
+			$today = Input::get('keyword');
+		} else {
+			$today_start = date('Y-m-d 00:00:00', time());
+			$today_end = date('Y-m-d 23:59:59', time());
+			$today = date('Y-m-d', time());
+		}
+
+		$morning = $afternoon = array();
+		
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '<', $today_end)->orderBy('worked_at', 'desc')->get();
+		foreach ($order as $value) {
+			if (date('H:i:s', strtotime($value->created_at)) < '12:00:00') {
+				$morning[$value->user->id] = $value;
+		    }
+		}
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '>', $today_end)->orderBy('worked_at', 'asc')->get();
+		foreach ($order as $value) {
+			if (date('H:i:s', strtotime($value->created_at)) >= '12:00:00') {
+				$afternoon[$value->user->id] = $value;
+		    }
+		}
+
+		//用户
+		$user = User::where('co_id', Auth::user()->id)->get();
+
+		//班次
+		$department = Department::where('co_id', Auth::user()->id)->get();
+
+		return View::make('orders.searchmobile')->with('today', $today)->with('users', $user)->with('department', $department)->with('morning', $morning)->with('afternoon', $afternoon);
+	}
+
 	public function orderList($co_id)
 	{
 		$list = Order::where('co_id', $co_id)->get();
@@ -74,9 +140,9 @@ class OrdersController extends \BaseController {
 		$today = date('Y-m-d 00:00:00', time());
 		$order = Order::where('user_id', Session::get('user_id'))->where('created_at', '>', $today)->first();
 		if(isset($order->id)) {
-			return View::make('orders.userorder.edit')->with('order', $order);
+			return View::make('orders.userorder.edit')->with('order', $order)->with('user', User::find(Session::get('user_id')));
 		}
-		return View::make('orders.userorder.create');
+		return View::make('orders.userorder.create')->with('user', User::find(Session::get('user_id')));
 	}
 
 	public function postUserOrder()
@@ -104,7 +170,7 @@ class OrdersController extends \BaseController {
 			#修改订餐
 			logs(Session::get('co_id'), 'order', 'U', $order->id);
 
-			Notification::success('保存成功！');
+			Session::flash('success', '订餐提交成功!');
 
 			return Redirect::route('user.order', Session::get('co_id'));
 		}
@@ -136,7 +202,7 @@ class OrdersController extends \BaseController {
 			#修改订餐
 			logs(Session::get('co_id'), 'order', 'I', $order->id);
 
-			Notification::success('保存成功！');
+			Session::flash('success', '订餐提交成功!');
 
 			return Redirect::route('user.order', Session::get('co_id'));
 		}
