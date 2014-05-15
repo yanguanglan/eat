@@ -22,7 +22,7 @@ class UsersController extends \BaseController {
 	public function postAdminLogin()
 	{
 		$user = array(
-			'name'    => Input::get('name'),
+			'adminphone'    => Input::get('name'),
 			'password' => Input::get('password')
 		);
 

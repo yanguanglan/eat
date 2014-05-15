@@ -18,6 +18,7 @@ class CreateCompaniesTable extends Migration {
 			$table->string('password');
 			$table->boolean('issms');
 			$table->string('phone');
+			$table->string('adminphone');
 			$table->string('version');
 			$table->string('remember_token')->nullable();
 			$table->timestamps();

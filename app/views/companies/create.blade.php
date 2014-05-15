@@ -31,6 +31,13 @@
 		</div>
 
 		<div class="control-group">
+			{{ Form::label('adminphone', '管理员电话') }}
+			<div class="controls">
+				{{ Form::text('adminphone') }}
+			</div>
+		</div>
+
+		<div class="control-group">
 			{{ Form::label('issms', '发送短信') }}
 			<div class="controls">
 				{{ Form::checkbox('issms', 1, true) }}

@@ -39,6 +39,7 @@ class CompaniesController extends \BaseController {
 			array(
 					'name' => 'required',
 					'phone' => 'required',
+					'adminphone' => 'required',
 					'version' => 'required',
 					'password' => 'required',
 				)		
@@ -50,6 +51,7 @@ class CompaniesController extends \BaseController {
 			$company->name   = Input::get('name');
 			$company->password = Hash::make(Input::get('password'));
 			$company->phone = Input::get('phone');
+			$company->adminphone = Input::get('adminphone');
 			$company->issms    = Input::get('issms') ? Input::get('issms') : 0;
 			$company->version = Input::get('version');
 			$company->save();
@@ -106,6 +108,7 @@ class CompaniesController extends \BaseController {
 			array(
 					'name' => 'required',
 					'phone' => 'required',
+					'adminphone' => 'required',
 					'version' => 'required',
 				)		
 			);
@@ -115,6 +118,7 @@ class CompaniesController extends \BaseController {
 			$company = Company::find($id);
 			$company->name   = Input::get('name');
 			$company->phone    = Input::get('phone');
+			$company->adminphone    = Input::get('adminphone');
 			$company->issms    = Input::get('issms') ? Input::get('issms') : 0;
 			$company->version = Input::get('version');
 			$company->save();

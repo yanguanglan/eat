@@ -16,6 +16,7 @@
 				<th>#</th>
 				<th>单位名称</th>
 				<th>手机号码</th>
+				<th>管理员电话</th>
 				<th>添加时间</th>
 				<th>发送短信</th>
 				<th>操作</th>
@@ -27,6 +28,7 @@
 					<td>{{ $company->id }}</td>
 					<td><a href="{{ URL::route('companies.show', $company->id) }}">{{ $company->name }}</a></td>
 					<td>{{ $company->phone }}</td>
+					<td>{{ $company->adminphone }}</td>
 					<td>{{ $company->created_at }}</td>
 					<td>@if($company->issms) 是 @else 否 @endif</td>
 					<td>
