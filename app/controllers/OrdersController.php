@@ -287,7 +287,7 @@ class OrdersController extends \BaseController {
 		));*/
 	}
 
-	public function postOrder($co_id, $order_id)
+	public function postOrder($co_id, $order_id = null)
 	{
 			if ($order_id) {
 				$order = Order::find($order_id);
