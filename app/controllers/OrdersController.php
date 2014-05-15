@@ -287,9 +287,13 @@ class OrdersController extends \BaseController {
 		));*/
 	}
 
-	public function postOrder($co_id)
+	public function postOrder($co_id, $order_id)
 	{
-			$order = new Order();
+			if ($order_id) {
+				$order = Order::find($order_id);
+			} else {
+				$order = new Order();
+			}
 			$order->co_id = $co_id;
 			$order->user_id = Input::get('user_id');
 			$order->breakfast = Input::get('breakfast');

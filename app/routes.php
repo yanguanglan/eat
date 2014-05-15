@@ -124,6 +124,6 @@ Route::group(array('prefix' => 'api'), function()
 	Route::get('orderlist/{co_id}', array('as' => 'orderlist', 'uses' => 'OrdersController@orderList'));
 	Route::get('loglist/{co_id}/{log_id}', array('as'=> 'loglist', 'uses'=>'LogsController@logList'));
 	Route::post('postfingerprint/{user_id}', array('as'=>'postfingerprint', 'uses'=>'UsersController@postFingerprint'));
-	Route::post('postorder/{co_id}', array('as'=>'postorder', 'uses'=>'OrdersController@postOrder'));
+	Route::post('postorder/{co_id}/{order_id?}', array('as'=>'postorder', 'uses'=>'OrdersController@postOrder'));
 });
 
