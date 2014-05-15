@@ -12,7 +12,7 @@
 	<meta name="keywords" content="" />
 	<meta name="description" content="" />
 	<link rel="stylesheet" type="text/css" href="{{ URL::asset('assets/css/reset.css') }}">
-	<script src="{{ URL::asset('assets/js/jquery-1.7.2.min.js') }}"></script>
+	<script src="{{ URL::asset('assets/js/jquery-1.9.1.min.js') }}"></script>
 </head>
 <body>
 	@yield('main')
