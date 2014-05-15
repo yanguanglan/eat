@@ -296,7 +296,7 @@ class OrdersController extends \BaseController {
 			$order->lunch = Input::get('lunch');
 			$order->dinner = Input::get('dinner');
 			$order->issms = Input::get('issms');
-			$order->worked_at = time();
+			$order->worked_at = Input::get('worked_at');
 			$order->save();
 
 			$list = Order::find($order->id);
