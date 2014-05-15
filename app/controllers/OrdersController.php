@@ -74,7 +74,7 @@ class OrdersController extends \BaseController {
 				$morning[$value->user->id] = $value;
 		    }
 		}
-		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '>', $today_end)->orderBy('worked_at', 'asc')->get();
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '<', $today_end)->orderBy('worked_at', 'asc')->get();
 		foreach ($order as $value) {
 			if (date('H:i:s', strtotime($value->worked_at)) >= '12:00:00') {
 				$afternoon[$value->user->id] = $value;
@@ -110,7 +110,7 @@ class OrdersController extends \BaseController {
 				$morning[$value->user->id] = $value;
 		    }
 		}
-		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '>', $today_end)->orderBy('worked_at', 'asc')->get();
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '<', $today_end)->orderBy('worked_at', 'asc')->get();
 		foreach ($order as $value) {
 			if (date('H:i:s', strtotime($value->worked_at)) >= '12:00:00') {
 				$afternoon[$value->user->id] = $value;
