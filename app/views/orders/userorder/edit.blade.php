@@ -61,7 +61,7 @@
 <script type="text/javascript">
 		$(function(){
 			//yes or no
-			$("h2.btn").click(function(){
+			$(".perList .btn").click(function(){
 				if($(this).hasClass("yes")){
 					$(this).removeClass("yes")
 					$(this).addClass("no");
