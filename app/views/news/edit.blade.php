@@ -18,7 +18,7 @@
 		<div class="control-group">
 			{{ Form::label('content', '内容') }}
 			<div class="controls">
-				{{ Form::text('content') }}
+				{{ Form::textarea('content') }}
 			</div>
 		</div>
 
