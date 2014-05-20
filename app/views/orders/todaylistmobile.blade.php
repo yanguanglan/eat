@@ -12,11 +12,13 @@
 	</div>
 	<div class="contTab">
 		@foreach ($orders as $order)
+		@if ($order->breakfast!=0 || $order->lunch!=0 || $order->dinner!=0)
 		<div class="table">
 			<div class="tableList">{{ $order->user->sn }} {{ $order->user->name }}</div>
 			<div class="tableList">{{ $order->lunch }}</div>
 			<div class="tableList">{{ $order->dinner }}</div>
 		</div>
+		@endif
 		@endforeach
 	</div>
 @stop

@@ -24,6 +24,7 @@
 		</thead>
 		<tbody>
 			@foreach ($orders as $order)
+			@if ($order->breakfast!=0 || $order->lunch!=0 || $order->dinner!=0)
 				<tr>
 					<td>{{ $order->id }}</td>
 					<td>{{ $order->user->name }}</a></td>
@@ -33,6 +34,7 @@
 					<td>{{ $order->created_at }}</td>
 					<td>@if($order->issms) 是 @else 否 @endif</td>
 				</tr>
+			@endif
 			@endforeach
 		</tbody>
 	</table>
