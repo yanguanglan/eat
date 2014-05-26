@@ -28,6 +28,9 @@ Route::group(array('before' => 'auth.mobile'), function()
 {
 	Route::get('mobile/order/search', array('as'=>'mobile.order.search', 'uses'=>'OrdersController@searchListMobile'));
 	Route::post('mobile/order/search', array('as'=>'mobile.order.search.post', 'uses'=>'OrdersController@searchListMobile'));
+	Route::get('mobile/todayorder', array('as'=>'mobile.todayorder', 'uses'=>'OrdersController@getTodayOrderMobile'));
+	Route::get('mobile/todayorderlist/{type}', array('as'=>'mobile.todayorderlist', 'uses'=>'OrdersController@getTodayOrderListMobile'));
+
 });
 
 Route::get('mobile/order/today/{co_id}', array('as'=>'mobile.order.today', 'uses'=>'OrdersController@getTodayMobile'));
@@ -44,6 +47,10 @@ Route::group(array('before'=>'auth.user'), function()
 
 	Route::get('user/order/{co_id}', array('as'=>'user.order', 'uses'=>'OrdersController@getUserOrder'));
 	Route::post('user/order', array('as'=>'user.order.post', 'uses'=>'OrdersController@postUserOrder'));
+
+	Route::get('mobile/order/travel', array('as'=>'mobile.order.travel', 'uses'=>'OrdersController@getTravelOrder'));
+	Route::post('mobile/order/travel', array('as'=>'mobile.order.travel.post', 'uses'=>'OrdersController@postTravelOrder'));
+
 });
 
 Route::get('admin/logout', array('as'=>'admin.logout', 'uses'=>'UsersController@getLogout'));

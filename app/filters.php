@@ -136,3 +136,14 @@ function punch($today, $department)
     }
     return $re;
 }
+
+function iif($f, $t)
+{
+	if ($f == $t) {
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}

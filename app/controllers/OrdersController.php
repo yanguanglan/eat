@@ -15,9 +15,14 @@ class OrdersController extends \BaseController {
 		#3
 		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
 		$travel = count($order);
+		#4
+		$user = User::where('co_id', $co_id)->get();
+		$nowork = count($user);
+		$nowork = $nowork - $work - $leave - $travel;
+
 
 		return Response::json(array(
-		        'data' => array('work'=>$work, 'leave'=>$leave, 'travel'=>$travel),
+		        'data' => array('work'=>$work, 'leave'=>$leave, 'travel'=>$travel, 'nowork'=>$nowork),
 		        'totalCount'=> 1
 		));	
 
@@ -40,6 +45,15 @@ class OrdersController extends \BaseController {
 		{
 			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
 		}
+		else
+		{
+			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->get();
+			$user_id = array();
+			foreach ($order as $value) {
+				$user_id[] = $value->user_id;
+			}
+			$order = User::where('co_id', $co_id)->whereNotIn('id', $user_id)->get();
+		}
 
 		return Response::json(array(
 		        'data' => $order->toArray(),
@@ -51,12 +65,141 @@ class OrdersController extends \BaseController {
 	public function getTodayOrderMobile()
 	{
 		#统计当天在岗，请假，公干人数/	手机端
-		
+		$today = date('Y-m-d 00:00:00', time());
+		#1
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+		$work = count($order);
+		#2
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+		$leave = count($order);
+		#3
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+		$travel = count($order);
+		#4
+		$user = User::where('co_id', Auth::user()->id)->get();
+		$nowork = count($user);
+		$nowork = $nowork - $work - $leave - $travel;
+        
+        $week = array(
+			'0' => '周日',
+			'1' => '周一',
+			'2' => '周二',
+			'3' => '周三',
+			'4' => '周四',
+			'5' => '周五',
+			'6' => '周六',
+		);
+		return View::make('orders.todayordermobile')->with('work', $work)->with('leave', $leave)->with('travel', $travel)->with('nowork', $nowork)->with('week', $week);
 	}
 
-	public function getTodayOrderListMobile()
+	public function getTodayOrderListMobile($type)
 	{
 		#统计当天在岗，请假，公干明细/	手机端
+		$today = date('Y-m-d 00:00:00', time());
+		if ($type == 'work') 
+		{
+			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+		} 
+		elseif ($type == 'leave')
+		{
+			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+		}
+		elseif ($type == 'travel')
+		{
+			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+		}
+		else
+		{
+			$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->get();
+			$user_id = array();
+			foreach ($order as $value) {
+				$user_id[] = $value->user_id;
+			}
+			$orders = User::where('co_id', Auth::user()->id)->whereNotIn('id', $user_id)->get();
+		}
+
+		return View::make('orders.todayorderlistmobile')->with('orders', $orders);
+	}
+
+	public function getTravelOrder()
+	{
+		$today = date('Y-m-d 00:00:00', time());
+		$order = Order::where('user_id', Session::get('user_id'))->where('worked_at', '>', $today)->where('reason', '!=', 'null')->first();
+		if(isset($order->id)) {
+			return View::make('orders.travelmobileedit')->with('order', $order)->with('user', User::find(Session::get('user_id')));
+		}
+		return View::make('orders.travelmobile')->with('user', User::find(Session::get('user_id')));
+		#请假/公干
+	}
+
+	public function postTravelOrder()
+	{
+		#请假/公干
+		#return View::make('orders.travelmobile');
+		$today = date('Y-m-d 00:00:00', time());
+		$order = Order::where('user_id', Session::get('user_id'))->where('worked_at', '>', $today)->where('reason', '!=', 'null')->first();
+		if($order) {
+			#edit
+			$validation = Validator::make(
+			Input::all(),
+			array(
+					'type' => 'required',
+					'reason' => 'required',	
+				)		
+			);
+
+		if ($validation->passes())
+		{
+			$order->type = Input::get('type');
+			$order->reason = Input::get('reason');
+			$order->worked_at = date('Y-m-d H:i:s', time());
+			$order->save();
+
+			#修改订餐
+			logs(Session::get('co_id'), 'order', 'U', $order->id);
+
+			Session::flash('success', '提交申请成功!');
+
+			return Redirect::route('mobile.order.travel');
+		}
+
+		    return Redirect::back()->withInput()->withErrors($validation->messages());
+
+		} 
+
+		$order = new Order;
+		#add
+				$validation = Validator::make(
+			Input::all(),
+			array(
+					'type' => 'required',
+					'reason' => 'required',	
+				)		
+			);
+
+		if ($validation->passes())
+		{
+			$order->co_id = Session::get('co_id');
+			$order->user_id = Session::get('user_id');
+			$order->breakfast = 0;
+			$order->lunch = 0;
+			$order->dinner = 0;
+			$order->issms = 0;
+			$order->reason = Input::get('reason');
+			$order->type = Input::get('type');
+			$order->worked_at = date('Y-m-d H:i:s', time());
+			$order->save();
+
+			#修改订餐
+			logs(Session::get('co_id'), 'order', 'I', $order->id);
+
+			Session::flash('success', '提交申请成功!');
+
+			return Redirect::route('mobile.order.travel');
+		}
+
+		    return Redirect::back()->withInput()->withErrors($validation->messages());
+
 	}
 
 	public function getToday()
