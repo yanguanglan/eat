@@ -118,6 +118,11 @@ Route::group(array('prefix' => 'api'), function()
 		));
 	});
 
+
+	#当天统计
+	Route::get('todayorder/{co_id}', array('as'=>'todayorder', 'uses'=>'OrdersController@getTodayOrder'));
+	Route::get('todayorderlist/{co_id}/{type}', array('as'=>'todayorderlist', 'uses'=>'OrdersController@getTodayOrderList'));
+
 	Route::get('userlist/{co_id}', array('as' => 'userlist', 'uses' => 'UsersController@userList'));
 	Route::get('departmentlist/{co_id}', array('as' => 'departmentlist', 'uses' => 'DepartmentsController@departmentList'));
 	Route::get('newslist/{co_id}', array('as' => 'newslist', 'uses' => 'NewsController@newsList'));

@@ -2,6 +2,63 @@
 
 class OrdersController extends \BaseController {
 
+	public function getTodayOrder($co_id)
+	{
+		#统计当天在岗，请假，公干人数
+		$today = date('Y-m-d 00:00:00', time());
+		#1
+		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+		$work = count($order);
+		#2
+		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+		$leave = count($order);
+		#3
+		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+		$travel = count($order);
+
+		return Response::json(array(
+		        'data' => array('work'=>$work, 'leave'=>$leave, 'travel'=>$travel),
+		        'totalCount'=> 1
+		));	
+
+	}
+
+	public function getTodayOrderList($co_id, $type)
+	{
+		#统计当天在岗，请假，公干明细
+		$today = date('Y-m-d 00:00:00', time());
+		$order = array();
+		if ($type == 'work') 
+		{
+			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+		} 
+		elseif ($type == 'leave')
+		{
+			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+		}
+		elseif ($type == 'travel')
+		{
+			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+		}
+
+		return Response::json(array(
+		        'data' => $order->toArray(),
+		        'totalCount'=> $order->count()
+		));	
+
+	}
+
+	public function getTodayOrderMobile()
+	{
+		#统计当天在岗，请假，公干人数/	手机端
+		
+	}
+
+	public function getTodayOrderListMobile()
+	{
+		#统计当天在岗，请假，公干明细/	手机端
+	}
+
 	public function getToday()
 	{
 		$today = date('Y-m-d 00:00:00', time());

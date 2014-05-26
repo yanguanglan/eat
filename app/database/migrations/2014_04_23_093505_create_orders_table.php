@@ -21,6 +21,9 @@ class CreateOrdersTable extends Migration {
 			$table->integer('dinner');
 			$table->boolean('issms');
 			$table->timestamp('worked_at')->nullable();
+			$table->boolean('isapproval')->default(0);
+			$table->text('reason')->nullable();
+			$table->boolean('type')->default(0);
 			$table->timestamps();
 		});
 	}
