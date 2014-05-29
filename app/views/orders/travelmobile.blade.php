@@ -1,36 +1,39 @@
-@extends('_layouts.default')
-
+@extends('_layouts.mobile')
 @section('main')
-
-	<h2>事务申请</h2>
-
-	@include('_partials.notifications')
+{{ Form::open(array('route' => 'mobile.order.travel.post')) }}
+    <div class="header ">
+		<a class="back" href="{{ URL::to('auth/logout', 1) }}">退出</a>
+		<div class="confirm"></div>
+		<div class="til"></div>
+	</div>
 	@if (Session::has('success'))
 			<p class="warning">
 				{{ Session::get('success') }}
 			</p>
 	@endif
-	{{ Form::open(array('route' => 'mobile.order.travel.post')) }}
- 
-		<label class="checkbox inline">
-			{{ Form::radio('type', 0, true) }} 请假
-		</label>
-		<label class="checkbox inline">
-		  {{ Form::radio('type', 1) }} 公干
-		</label>
-
-	    <div class="control-group">
-			{{ Form::label('reason', '事由') }}
-			<div class="controls">
-				{{ Form::textarea('reason') }}
-			</div>
+	@if ($errors->any())
+			<p class="warning">
+				{{ implode(',', $errors->all()) }}
+			</p>
+	@endif
+	<div class="header table leaveTab">
+		<div class="tableList active">
+			{{ Form::radio('type', 0, true) }}请假</div>
+		<div class="tableList"><b class="b1"></b>
+			{{ Form::radio('type', 1) }}公干</div>
+	</div>
+	<div class="leaveCont">
+		<div class="time">
+			<h2>起始时间</h2>
+			{{ Form::input('datetime-local', 'timestart', $timestart, array('class' => 'input01', 'placeholder' => 'Time')) }}
+			<span>至</span>
+			{{ Form::input('datetime-local', 'timeend', $timeend, array('class' => 'input01', 'placeholder' => 'Time')) }}
 		</div>
-
-		<div class="form-actions">
-			{{ Form::submit('保存', array('class' => 'btn btn-success btn-save btn-large')) }}
-			{{ Form::reset('重置', array('class' => 'btn btn-success btn-save btn-large')) }}
+		<div class="reason">
+			<h2>事由</h2>
+			{{ Form::textarea('reason') }}
 		</div>
-
-	{{ Form::close() }}
-
+		{{ Form::submit('提  交', array('class' => 'btn')) }}
+	</div>
+{{ Form::close() }}
 @stop

@@ -43,12 +43,18 @@ class DepartmentsController extends \BaseController {
 	public function store()
 	{
 		//
+		$attributes = array('name' => '班次名称',
+			'starttime' => '上班时间',
+			'endtime' => '下班时间',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
 					'name' => 'required',
 					'starttime' => 'required',
-					'endtime' => 'required',				)		
+					'endtime' => 'required',				),
+					array(),
+					$attributes	
 			);
 
 		if ($validation->passes())
@@ -104,12 +110,18 @@ class DepartmentsController extends \BaseController {
 	public function update($id)
 	{
 		//
+		$attributes = array('name' => '班次名称',
+			'starttime' => '上班时间',
+			'endtime' => '下班时间',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
 					'name' => 'required',
 					'starttime' => 'required',
-					'endtime' => 'required',				)		
+					'endtime' => 'required',				),
+					array(),
+					$attributes		
 			);
 
 		if ($validation->passes())

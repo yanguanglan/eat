@@ -16,11 +16,14 @@ Route::get('/', array('as'=>'home',function()
 	return View::make('hello');
 }));
 
-Route::get('auth/login/{co_id}', array('as'=>'user.login', 'uses'=>'UsersController@getUserLogin'));
-Route::post('auth/login/{co_id}', array('as'=>'user.login.post', 'uses'=>'UsersController@postUserLogin'));
-Route::get('auth/logout', function(){
+Route::get('auth/login/{co_id}/{type?}', array('as'=>'user.login', 'uses'=>'UsersController@getUserLogin'));
+Route::post('auth/login/{co_id}/{type?}', array('as'=>'user.login.post', 'uses'=>'UsersController@postUserLogin'));
+Route::get('auth/logout/{type?}', function($type=0){
 	$co_id = Session::get('co_id');
 	Session::flush();
+	if($type == 1) {
+		return Redirect::route('user.login', array($co_id, 1));
+	}
 	return Redirect::route('user.login', $co_id);
 });
 

@@ -28,7 +28,7 @@ class UsersController extends \BaseController {
 
 			if (Auth::attempt($user)) 
 			{	
-			    return Redirect::route('mobile.order.search');
+			    return Redirect::route('mobile.todayorder');
 			}
 			else
 			{   
@@ -42,7 +42,7 @@ class UsersController extends \BaseController {
 		return Redirect::route('user.admin.login');
 	}
 
-	public function postUserLogin($co_id)
+	public function postUserLogin($co_id, $type = 0)
 	{
 		$user = User::where('co_id', $co_id)->where('sn', Input::get('sn'))->first();
 		if(isset($user->id)) {
@@ -53,7 +53,10 @@ class UsersController extends \BaseController {
 			    Session::put('user_id', $user->id);
 			    Session::put('name', $user->name);
 			    Session::put('co_id', $co_id);
-
+			    if ($type == 1) 
+			    {
+			    	return Redirect::route('mobile.order.travel');
+			    }
 			    return Redirect::route('user.order', $co_id); 
 			}
 		}
@@ -68,12 +71,17 @@ class UsersController extends \BaseController {
 
 	public function postProfile()
 	{
+		$attributes = array('name' => '员工姓名',
+			'phone' => '手机号码',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
 				    'name' => 'required',
 				    'phone' => 'required',
-				   )		
+				   ),
+				array(),
+				$attributes	
 			);
 
 		if ($validation->passes())
@@ -109,11 +117,17 @@ class UsersController extends \BaseController {
 
 	public function postUserProfile()
 	{
+		$attributes = array(
+			'phone' => '手机号码',
+		 );
+
 		$validation = Validator::make(
 			Input::all(),
 			array(
 				    'phone' => 'required',
-				   )		
+				   ),
+				   array(),
+				   $attributes	
 			);
 
 		if ($validation->passes())
@@ -207,12 +221,21 @@ class UsersController extends \BaseController {
 	public function store()
 	{
 		//
+
+		$attributes = array(
+			'sn' => '员工工号',
+			'name' => '员工姓名',
+			'phone' => '手机号码',
+		 );
+
 		$validation = Validator::make(
 			Input::all(),
 			array(
 				    'sn' => 'required',
 					'name' => 'required',
-					'phone' => 'required',				)		
+					'phone' => 'required',				),
+					array(),
+					$attributes		
 			);
         
         $count = User::where('co_id', Auth::user()->id)->count();
@@ -273,13 +296,20 @@ class UsersController extends \BaseController {
 	public function update($id)
 	{
 		//
+		$attributes = array(
+			'sn' => '员工工号',
+			'name' => '员工姓名',
+			'phone' => '手机号码',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(  
 				    'sn' => 'required',
 					'name' => 'required',
 					'phone' => 'required',	
-				)		
+				),
+				array(),
+				$attributes		
 			);
 
 		if ($validation->passes())

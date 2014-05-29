@@ -34,6 +34,12 @@ class CompaniesController extends \BaseController {
 	 */
 	public function store()
 	{
+		$attributes = array('name' => '单位名称',
+			'phone' => '联系号码',
+			'adminphone' => '管理员手机',
+			'version' => '版本号',
+			'password' => '密码',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
@@ -42,7 +48,9 @@ class CompaniesController extends \BaseController {
 					'adminphone' => 'required',
 					'version' => 'required',
 					'password' => 'required',
-				)		
+				),
+				array(),
+				$attributes		
 			);
 
 		if ($validation->passes())
@@ -103,6 +111,12 @@ class CompaniesController extends \BaseController {
 	public function update($id)
 	{
 		//
+		$attributes = array('name' => '单位名称',
+			'phone' => '联系号码',
+			'adminphone' => '管理员手机',
+			'version' => '版本号',
+			'password' => '密码',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
@@ -110,7 +124,9 @@ class CompaniesController extends \BaseController {
 					'phone' => 'required',
 					'adminphone' => 'required',
 					'version' => 'required',
-				)		
+				),
+				array(),
+				$attributes	
 			);
 
 		if ($validation->passes())

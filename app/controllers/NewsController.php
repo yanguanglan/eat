@@ -43,11 +43,16 @@ class NewsController extends \BaseController {
 	public function store()
 	{
 		//
+		$attributes = array('title' => '标题',
+			'content' => '内容',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
 					'title' => 'required',
-					'content' => 'required',				)		
+					'content' => 'required',				),
+					array(),
+					$attributes		
 			);
 
 		if ($validation->passes())
@@ -106,12 +111,17 @@ class NewsController extends \BaseController {
 	public function update($id)
 	{
 		//
+		$attributes = array('title' => '标题',
+			'content' => '内容',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
 					'title' => 'required',
 					'content' => 'required',
-				)		
+				),
+			array(),
+			$attributes
 			);
 
 		if ($validation->passes())

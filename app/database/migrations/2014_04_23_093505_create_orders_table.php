@@ -24,6 +24,8 @@ class CreateOrdersTable extends Migration {
 			$table->boolean('isapproval')->default(0);
 			$table->text('reason')->nullable();
 			$table->boolean('type')->default(0);
+			$table->timestamp('timestart')->nullable();
+			$table->timestamp('timeend')->nullable();
 			$table->timestamps();
 		});
 	}

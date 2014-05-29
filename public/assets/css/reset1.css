@@ -210,7 +210,8 @@ p{ color:#575656; font-size:100%; line-height:20px; font-family: "微软雅黑"}
 }
 .contTab .table{
 	height: 58px;
-	border-bottom: 1px solid #ececec;
+	border-top: 1px solid #f5f5f5;
+	border-bottom: 1px solid #f0f0f0;
 }
 .contTab .table .tableList{
 	height: 58px;
@@ -228,6 +229,7 @@ p{ color:#575656; font-size:100%; line-height:20px; font-family: "微软雅黑"}
  ++++++++++++++++登陆
  */
 .login{
+	min-height: 100%;
 	background: #5c88d9;
 	width: 100%;
 	text-align: center;
@@ -266,42 +268,6 @@ p{ color:#575656; font-size:100%; line-height:20px; font-family: "微软雅黑"}
 	color: #396BC6;
 	font-size: 1.125em;
 	border: 1px solid #fcff00;
-	text-indent: 0;
-}
-.search{
-	width: 100%;
-	text-align: center;
-	border-bottom: 0px;
-	padding: 5px 0;
-}
-.searchBox{
-	background:;
-	border: 1px solid #396bc6;
-	width: 84.35%;
-	margin: 0px auto;
-	height: 34px;
-	background: #ffffff url(../images/search.png) no-repeat center right;
-	position:relative;
-}
-.searchBox .input01{
-	height: 34px;
-	line-height: 34px;
-	background: none;
-	border: 0;
-	float: left;
-	width: 95%;
-	text-indent: 8px;
-}
-.searchBox .submit{
-	width: 5%;
-	height: 34px;
-	line-height: 34px;
-	position: absolute;
-	right: 0px;
-	top: 0px;
-}
-.tableList span.cd{
-	color: #c00
 }
 /*
  ++++++++++++++++修改密码
@@ -418,7 +384,6 @@ p.warning{
 .inquire .inpuireCont{
 	display: table-cell;
 	vertical-align: middle;
-	overflow: hidden;
 }
 .inquire .inpuireCont p.time{
 	font-size: 18px;
@@ -430,13 +395,11 @@ p.warning{
 	line-height: 70px;
 	font-weight: normal;
 	color: #fff;
-	white-space: nowrap;
 }
-.inquire .inpuireCont p.num, .inpuireCont a {
+.inquire .inpuireCont p.num{
 	color: #fcff00;
-	font-size: 70px;
+	font-size: 90px;
 	line-height: 100px;
-	white-space: nowrap;
 }
 .inquire .inpuireCont p.num span{
 	font-size: 18px;
@@ -446,138 +409,41 @@ p.warning{
 	background: #4a72cd
 }
 
-
-
-/*请假公干*/
-.leaveTab{
-	background: #fbfbfb;
-	border-color:#ececec ;
-	color: #497cd9;
-	
+.search{
+	width: 100%;
+	text-align: center;
+	border-bottom: 0px;
+	padding: 5px 0;
 }
-.leaveTab .tableList{
-	width: 50%;
-	color: #497cd9;
+.searchBox{
+	background:;
+	border: 1px solid #396bc6;
+	width: 84.35%;
+	margin: 0px auto;
+	height: 34px;
+	background: #ffffff;
+	position:relative;
 }
-.leaveTab .tableList input{
-	margin-top:0 ;
-}
-.header .tableList.active{
-	color: #497cd9
-}
-.leaveCont{
-	width: 85.3%;
-	margin: 26px auto;
-}
-.leaveCont h2{
-	font-size: 0.9375em;
-	color: #6e6e6e;
-	font-weight: normal;
-	line-height: 25px;
-	margin-bottom: 5px;
-}
-.leaveCont .time{
-	margin: 5px 0;
-}
-.inp01{
-	background: #efefef;
-	border: 1px solid #e1e1e1;
-	border-top-color: #c6c6c6;
-	height: 22px;
-	line-height: 22px;
-	padding:6px 11px; 
-}
-.leaveCont .time input{
-	width: 35%
-}
-.leaveCont .time span{
-	font-size: 0.9375em;
-	color: #6e6e6e;
-	padding: 0 2px;
-}
-.leaveCont .reason{
-	margin: 26px 0;
-}
-.leaveCont .reason textarea{
-	width: 98%;
-	max-width: 98%;
-	min-width: 98%;
-	height: 158px;
-	min-height: 158px;
-	max-height: 158px;
-}
-input.btn{
-	border-color: #6c94dd;
-	background: #6c94dd;
-	color: #fff;
-	
-	height: 40px;
-	line-height: 40px;
-	padding: 0px;
+.searchBox .input01{
+	height: 34px;
+	line-height: 34px;
+	background: none;
 	border: 0;
-	font-size: 1.125em
-}
-.leaveCont input.btn{
+	float: left;
 	width: 100%;
+	text-indent: 8px;
 }
-/*主要画面*/
-.blueBg{
-	background: #4a72cd;
-	overflow: hidden
+.searchBox .submit{
+	height: 100px;
+		float: right;
+	width: 100px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
 }
-.main{
-	width: 93.4%;
-	margin: 15px auto;
-	overflow: hidden
+.tableList span.cd{
+	color: #c00
 }
-.main hr{
-	position: fixed;
-	color: rgba(255,255,255,0.4);
-	width: 100%;
-}
-.main hr.hr01{
-	top: 50%;
-	left: 0;
-}
-.main hr.hr02{
-	top: 50%;
-	left: 0;
-	-moz-transform: rotate(90deg);
-   -webkit-transform: rotate(90deg);
-   -o-transform: rotate(90deg);
-   -ms-transform: rotate(90deg);
-   transform: rotate(90deg); 
-}
-.main .inquire{
-	width: 50%;
-	margin-left: -1px;
-	margin-top: -1px;
-	border-left: 1px solid rgba(255,255,255,0.4);
-	border-top: 1px solid rgba(255,255,255,0.4);
-	float: left
-}
-.contTab .table.tebleHead{
-	background: #fbfbfb;
-	color: #497cd9
-}
-.postTab .tableList{
-	width: 50%;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

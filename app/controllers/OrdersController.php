@@ -7,13 +7,13 @@ class OrdersController extends \BaseController {
 		#统计当天在岗，请假，公干人数
 		$today = date('Y-m-d 00:00:00', time());
 		#1
-		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->get();
 		$work = count($order);
 		#2
-		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+		$order = Order::where('co_id', $co_id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 0)->get();
 		$leave = count($order);
 		#3
-		$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+		$order = Order::where('co_id', $co_id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 1)->get();
 		$travel = count($order);
 		#4
 		$user = User::where('co_id', $co_id)->get();
@@ -35,15 +35,15 @@ class OrdersController extends \BaseController {
 		$order = array();
 		if ($type == 'work') 
 		{
-			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->get();
 		} 
 		elseif ($type == 'leave')
 		{
-			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+			$order = Order::where('co_id', $co_id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 0)->get();
 		}
 		elseif ($type == 'travel')
 		{
-			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+			$order = Order::where('co_id', $co_id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 1)->get();
 		}
 		else
 		{
@@ -52,7 +52,14 @@ class OrdersController extends \BaseController {
 			foreach ($order as $value) {
 				$user_id[] = $value->user_id;
 			}
-			$order = User::where('co_id', $co_id)->whereNotIn('id', $user_id)->get();
+
+			if (!empty($user_id)) {
+				$order = User::where('co_id', $co_id)->whereNotIn('id', $user_id)->get();
+			}
+			else
+			{
+				$order = User::where('co_id', $co_id)->get();
+			}
 		}
 
 		return Response::json(array(
@@ -67,29 +74,20 @@ class OrdersController extends \BaseController {
 		#统计当天在岗，请假，公干人数/	手机端
 		$today = date('Y-m-d 00:00:00', time());
 		#1
-		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->get();
 		$work = count($order);
 		#2
-		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+		$order = Order::where('co_id', Auth::user()->id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 0)->get();
 		$leave = count($order);
 		#3
-		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+		$order = Order::where('co_id', Auth::user()->id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 1)->get();
 		$travel = count($order);
 		#4
 		$user = User::where('co_id', Auth::user()->id)->get();
 		$nowork = count($user);
 		$nowork = $nowork - $work - $leave - $travel;
         
-        $week = array(
-			'0' => '周日',
-			'1' => '周一',
-			'2' => '周二',
-			'3' => '周三',
-			'4' => '周四',
-			'5' => '周五',
-			'6' => '周六',
-		);
-		return View::make('orders.todayordermobile')->with('work', $work)->with('leave', $leave)->with('travel', $travel)->with('nowork', $nowork)->with('week', $week);
+		return View::make('orders.todayordermobile')->with('work', $work)->with('leave', $leave)->with('travel', $travel)->with('nowork', $nowork);
 	}
 
 	public function getTodayOrderListMobile($type)
@@ -98,24 +96,32 @@ class OrdersController extends \BaseController {
 		$today = date('Y-m-d 00:00:00', time());
 		if ($type == 'work') 
 		{
-			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', 'null')->get();
+			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->get();
 		} 
 		elseif ($type == 'leave')
 		{
-			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 0)->get();
+			$orders = Order::where('co_id', Auth::user()->id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 0)->get();
 		}
 		elseif ($type == 'travel')
 		{
-			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->where('reason', '!=', 'null')->where('type', 1)->get();
+			$orders = Order::where('co_id', Auth::user()->id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 1)->get();
 		}
 		else
 		{
-			$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->get();
+			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->get();
 			$user_id = array();
-			foreach ($order as $value) {
+			foreach ($orders as $value) {
 				$user_id[] = $value->user_id;
 			}
-			$orders = User::where('co_id', Auth::user()->id)->whereNotIn('id', $user_id)->get();
+			
+			if (!empty($user_id)) {
+				$orders = User::where('co_id', Auth::user()->id)->whereNotIn('id', $user_id)->get();
+			}
+			else
+			{
+				$orders = User::where('co_id', Auth::user()->id)->get();
+			}
+
 		}
 
 		return View::make('orders.todayorderlistmobile')->with('orders', $orders);
@@ -124,11 +130,14 @@ class OrdersController extends \BaseController {
 	public function getTravelOrder()
 	{
 		$today = date('Y-m-d 00:00:00', time());
-		$order = Order::where('user_id', Session::get('user_id'))->where('worked_at', '>', $today)->where('reason', '!=', 'null')->first();
+		$timestart = $timeend = strftime('%Y-%m-%dT%H:%M:%S', time());
+		$order = Order::where('user_id', Session::get('user_id'))->where('timestart', '>', $today)->where('timeend', '>', $today)->first();
 		if(isset($order->id)) {
-			return View::make('orders.travelmobileedit')->with('order', $order)->with('user', User::find(Session::get('user_id')));
+			$timestart = strftime('%Y-%m-%dT%H:%M:%S', strtotime($order->timestart));
+			$timeend = strftime('%Y-%m-%dT%H:%M:%S', strtotime($order->timeend));
+			return View::make('orders.travelmobileedit')->with('order', $order)->with('user', User::find(Session::get('user_id')))->with('timestart', $timestart)->with('timeend', $timeend);
 		}
-		return View::make('orders.travelmobile')->with('user', User::find(Session::get('user_id')));
+		return View::make('orders.travelmobile')->with('user', User::find(Session::get('user_id')))->with('timestart', $timestart)->with('timeend', $timeend);
 		#请假/公干
 	}
 
@@ -137,7 +146,14 @@ class OrdersController extends \BaseController {
 		#请假/公干
 		#return View::make('orders.travelmobile');
 		$today = date('Y-m-d 00:00:00', time());
-		$order = Order::where('user_id', Session::get('user_id'))->where('worked_at', '>', $today)->where('reason', '!=', 'null')->first();
+		$timestart = date('Y-m-d H:i:s', strtotime(Input::get('timestart')));
+		$order = Order::where('user_id', Session::get('user_id'))->where('timestart', '>', $today)->where('timeend', '>', $today)->first();
+		$attributes	= array(
+			'type' => '类型',
+			'reason' => '事由',
+			'timestart' => '请假时间',
+			'timeend' => '到岗时间'
+		);
 		if($order) {
 			#edit
 			$validation = Validator::make(
@@ -145,14 +161,20 @@ class OrdersController extends \BaseController {
 			array(
 					'type' => 'required',
 					'reason' => 'required',	
-				)		
+					'timestart' => "required|after:$today",
+					'timeend' => "required|after:$timestart",
+				),
+			array(),
+			$attributes	
 			);
 
 		if ($validation->passes())
 		{
+
 			$order->type = Input::get('type');
 			$order->reason = Input::get('reason');
-			$order->worked_at = date('Y-m-d H:i:s', time());
+			$order->timestart = Input::get('timestart');
+			$order->timeend = Input::get('timeend');
 			$order->save();
 
 			#修改订餐
@@ -174,7 +196,11 @@ class OrdersController extends \BaseController {
 			array(
 					'type' => 'required',
 					'reason' => 'required',	
-				)		
+					'timestart' => "required|after:$today",
+					'timeend' => "required|after:$timestart",
+				),
+				array(),
+				$attributes	
 			);
 
 		if ($validation->passes())
@@ -187,7 +213,8 @@ class OrdersController extends \BaseController {
 			$order->issms = 0;
 			$order->reason = Input::get('reason');
 			$order->type = Input::get('type');
-			$order->worked_at = date('Y-m-d H:i:s', time());
+			$order->timestart = Input::get('timestart');
+			$order->timeend = Input::get('timeend');
 			$order->save();
 
 			#修改订餐
@@ -349,6 +376,10 @@ class OrdersController extends \BaseController {
 	{
 		$today = date('Y-m-d 00:00:00', time());
 		$order = Order::where('user_id', Session::get('user_id'))->where('created_at', '>', $today)->first();
+		$attributes = array('breakfast' => '早餐',
+			'lunch' => '中餐',
+			'dinner' => '晚餐',
+		 );
 		if($order) {
 			#edit
 			$validation = Validator::make(
@@ -356,7 +387,9 @@ class OrdersController extends \BaseController {
 			array(
 					'breakfast' => 'required|numeric',
 					'lunch' => 'required|numeric',	
-					'dinner' => 'required|numeric',			)		
+					'dinner' => 'required|numeric',			),
+					array(),
+					$attributes		
 			);
 
 		if ($validation->passes())
@@ -386,7 +419,9 @@ class OrdersController extends \BaseController {
 			array(
 					'breakfast' => 'required|numeric',
 					'lunch' => 'required|numeric',	
-					'dinner' => 'required|numeric',			)		
+					'dinner' => 'required|numeric',			),
+					array(),
+					$attributes		
 			);
 
 		if ($validation->passes())
@@ -441,13 +476,19 @@ class OrdersController extends \BaseController {
 	 */
 	public function store()
 	{
+		$attributes = array('breakfast' => '早餐',
+			'lunch' => '中餐',
+			'dinner' => '晚餐',
+		 );
 
 		$validation = Validator::make(
 			Input::all(),
 			array(
 					'breakfast' => 'required',
 					'lunch' => 'required',	
-					'dinner' => 'required',			)		
+					'dinner' => 'required',			),
+					array(),
+					$attributes	
 			);
 
 		if ($validation->passes())
@@ -547,13 +588,18 @@ class OrdersController extends \BaseController {
 	public function update($id)
 	{
 		//
-
+		$attributes = array('breakfast' => '早餐',
+			'lunch' => '中餐',
+			'dinner' => '晚餐',
+		 );
 		$validation = Validator::make(
 			Input::all(),
 			array(
 					'breakfast' => 'required',
 					'lunch' => 'required',	
-					'dinner' => 'required',			)		
+					'dinner' => 'required',			),
+					array(),
+					$attributes	
 			);
 
 		if ($validation->passes())
