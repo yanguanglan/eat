@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Input;
 class OrdersController extends \BaseController {
 
 	public function getTodayOrder($co_id)
@@ -24,7 +25,7 @@ class OrdersController extends \BaseController {
 		return Response::json(array(
 		        'data' => array('work'=>$work, 'leave'=>$leave, 'travel'=>$travel, 'nowork'=>$nowork),
 		        'totalCount'=> 1
-		));	
+		));
 
 	}
 
@@ -33,10 +34,10 @@ class OrdersController extends \BaseController {
 		#统计当天在岗，请假，公干明细
 		$today = date('Y-m-d 00:00:00', time());
 		$order = array();
-		if ($type == 'work') 
+		if ($type == 'work')
 		{
 			$order = Order::where('co_id', $co_id)->where('worked_at', '>', $today)->get();
-		} 
+		}
 		elseif ($type == 'leave')
 		{
 			$order = Order::where('co_id', $co_id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 0)->get();
@@ -65,7 +66,7 @@ class OrdersController extends \BaseController {
 		return Response::json(array(
 		        'data' => $order->toArray(),
 		        'totalCount'=> $order->count()
-		));	
+		));
 
 	}
 
@@ -86,7 +87,7 @@ class OrdersController extends \BaseController {
 		$user = User::where('co_id', Auth::user()->id)->get();
 		$nowork = count($user);
 		$nowork = $nowork - $work - $leave - $travel;
-        
+
 		return View::make('orders.todayordermobile')->with('work', $work)->with('leave', $leave)->with('travel', $travel)->with('nowork', $nowork);
 	}
 
@@ -94,10 +95,10 @@ class OrdersController extends \BaseController {
 	{
 		#统计当天在岗，请假，公干明细/	手机端
 		$today = date('Y-m-d 00:00:00', time());
-		if ($type == 'work') 
+		if ($type == 'work')
 		{
 			$orders = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today)->get();
-		} 
+		}
 		elseif ($type == 'leave')
 		{
 			$orders = Order::where('co_id', Auth::user()->id)->where('timestart', '>', $today)->where('timeend', '>', $today)->where('type', 0)->get();
@@ -113,7 +114,7 @@ class OrdersController extends \BaseController {
 			foreach ($orders as $value) {
 				$user_id[] = $value->user_id;
 			}
-			
+
 			if (!empty($user_id)) {
 				$orders = User::where('co_id', Auth::user()->id)->whereNotIn('id', $user_id)->get();
 			}
@@ -160,12 +161,12 @@ class OrdersController extends \BaseController {
 			Input::all(),
 			array(
 					'type' => 'required',
-					'reason' => 'required',	
+					'reason' => 'required',
 					'timestart' => "required|after:$today",
 					'timeend' => "required|after:$timestart",
 				),
 			array(),
-			$attributes	
+			$attributes
 			);
 
 		if ($validation->passes())
@@ -187,7 +188,7 @@ class OrdersController extends \BaseController {
 
 		    return Redirect::back()->withInput()->withErrors($validation->messages());
 
-		} 
+		}
 
 		$order = new Order;
 		#add
@@ -195,12 +196,12 @@ class OrdersController extends \BaseController {
 			Input::all(),
 			array(
 					'type' => 'required',
-					'reason' => 'required',	
+					'reason' => 'required',
 					'timestart' => "required|after:$today",
 					'timeend' => "required|after:$timestart",
 				),
 				array(),
-				$attributes	
+				$attributes
 			);
 
 		if ($validation->passes())
@@ -292,9 +293,13 @@ class OrdersController extends \BaseController {
 			$today_end = date('Y-m-d 23:59:59', time());
 			$today = date('Y-m-d', time());
 		}
+		//用户
+		$user = User::where('co_id', Auth::user()->id)->get();
+		//班次
+		$department = Department::where('co_id', Auth::user()->id)->get();
 
 		$morning = $afternoon = array();
-		
+
 		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '<', $today_end)->orderBy('worked_at', 'desc')->get();
 		foreach ($order as $value) {
 			if (date('H:i:s', strtotime($value->worked_at)) < '12:00:00') {
@@ -307,12 +312,6 @@ class OrdersController extends \BaseController {
 				$afternoon[$value->user->id] = $value;
 		    }
 		}
-
-		//用户
-		$user = User::where('co_id', Auth::user()->id)->get();
-
-		//班次
-		$department = Department::where('co_id', Auth::user()->id)->get();
 
 		return View::make('orders.search')->with('today', $today)->with('users', $user)->with('department', $department)->with('morning', $morning)->with('afternoon', $afternoon);
 	}
@@ -330,7 +329,7 @@ class OrdersController extends \BaseController {
 		}
 
 		$morning = $afternoon = array();
-		
+
 		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', '>', $today_start)->where('worked_at', '<', $today_end)->orderBy('worked_at', 'desc')->get();
 		foreach ($order as $value) {
 			if (date('H:i:s', strtotime($value->worked_at)) < '12:00:00') {
@@ -353,6 +352,125 @@ class OrdersController extends \BaseController {
 		return View::make('orders.searchmobile')->with('today', $today)->with('users', $user)->with('department', $department)->with('morning', $morning)->with('afternoon', $afternoon);
 	}
 
+	public function setdateList()
+	{
+		if(!isset($_POST['savedate'])){
+			$time = isset($_POST['keyword']) && strtotime($_POST['keyword']) ? strtotime($_POST['keyword']): time();
+			$list=array();
+			$day_num = date('t',$time);
+			$today = date('Y-m',$time);
+			$res = Workdate::where('co_id', Auth::user()->id)->where('ymd','like',$today.'-%')->orderBy('ymd','asc')->get();
+			if($res){
+				foreach ($res as $key => $val){
+					$list[$val->ymd]=$val;
+				}
+			}
+			return View::make('orders.setdate')->with('list',$list)->with('day_num', $day_num)->with('today',$today);
+		}else{
+			Workdate::where('co_id', Auth::user()->id)->where('ymd','like',$_POST['ym'].'%')->delete();
+			if(is_array($_POST['name']) && count($_POST['name'])>0){
+				$datas=array();
+				foreach ($_POST['name'] as $key => $val){
+					if(!$val) continue;
+					$datas[]=array('ymd'=>$key,'co_id'=>Auth::user()->id,'is_work'=>1);
+				}
+				if(!empty($datas)){
+					DB::table('work_date')->insert($datas);
+				}
+			}
+			Notification::success('保存成功！');
+			return Redirect::route('order.setdate');
+		}
+	}
+
+	public function countList()
+	{
+		$user=array();
+		$user_temp=$workdate=array();
+		if(Input::get('keyword')) {
+			$today = Input::get('keyword');
+		} else {
+			$today = date('Y-m', time());
+		}
+		$day_num = date('t',strtotime($today));
+		//用户
+		$user_res = User::where('co_id', Auth::user()->id)->get();
+		foreach ($user_res as $key => $val){
+			$user[$val->id]=array(
+					'user_id'=>$val->id,
+					'sn'=>$val->sn,
+					'name'=>$val->name,
+					'phone'=>$val->phone,
+					'normal'=>0,			//正常打卡次数
+					'late'=>0,				//迟到次数
+					'no_records'=>0,		//没打卡次数
+			);
+		}
+		//班次
+		$department = Department::where('co_id', Auth::user()->id)->get();
+		//考勤日
+		$workdate_res = Workdate::where('co_id', Auth::user()->id)->where('ymd','like',$today.'-%')->orderBy('ymd','asc')->get();
+		if(count($workdate_res)>0){
+			foreach ($workdate_res as $key => $val){
+				$workdate[$val->ymd]=array(
+					'ymd'=>$val->ymd,
+					'is_work'=>$val->is_work
+				);
+			}
+		}else{
+			//如果管理员没设置考勤日，就默认使用工作日
+			for ($i=1;$i<=$day_num;$i++){
+				$i=$i<10?'0'.$i:$i;
+				$w=date("w",strtotime($today.'-'.$i));
+				if(!in_array($w, array(6,0))){
+					$workdate[$today.'-'.$i]=array(
+							'ymd'=>$today.'-'.$i,
+							'is_work'=>1
+					);
+				}
+			}
+		}
+
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', 'like', $today.'-%')->orderBy('worked_at', 'asc')->get();
+		//上班
+		foreach ($order as $value) {
+			$ymd = date('Y-m-d', strtotime($value->worked_at));
+			$his = date('H:i:s', strtotime($value->worked_at));
+			if(!isset($workdate[$ymd])) continue;
+			if ($his < '12:00:00') {
+				if(isset($user_temp[$value->user_id][$ymd.'_am'])){
+					continue;
+				}
+				if(punch($his, $department)){
+					$user[$value->user_id]['late']++;
+				}else{
+					$user[$value->user_id]['normal']++;
+				}
+				$user_temp[$value->user_id][$ymd.'_am']=1;
+			}
+		}
+		//下班
+		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', 'like', $today.'-%')->orderBy('worked_at', 'desc')->get();
+		foreach ($order as $value) {
+			$ymd = date('Y-m-d', strtotime($value->worked_at));
+			$his = date('H:i:s', strtotime($value->worked_at));
+			if(!isset($workdate[$ymd])) continue;
+			if($his >= '12:00:00'){
+		    	if(isset($user_temp[$value->user_id][$ymd.'_pm'])){
+		    		continue;
+		    	}
+				if(punch($his, $department)){
+					$user[$value->user_id]['late']++;
+				}else{
+					$user[$value->user_id]['normal']++;
+				}
+		    	$user_temp[$value->user_id][$ymd.'_pm']=1;
+		    }
+		}
+		//var_dump($user);exit;
+		return View::make('orders.count')->with('today', $today)->with('users', $user)->with('num_count', count($workdate)*2);
+	}
+
 	public function orderList($co_id)
 	{
 		$list = Order::where('co_id', $co_id)->get();
@@ -363,7 +481,7 @@ class OrdersController extends \BaseController {
 	}
 
 	public function getUserOrder($co_id)
-	{	
+	{
 		$today = date('Y-m-d 00:00:00', time());
 		$order = Order::where('user_id', Session::get('user_id'))->where('created_at', '>', $today)->first();
 		if(isset($order->id)) {
@@ -386,10 +504,10 @@ class OrdersController extends \BaseController {
 			Input::all(),
 			array(
 					'breakfast' => 'required|numeric',
-					'lunch' => 'required|numeric',	
+					'lunch' => 'required|numeric',
 					'dinner' => 'required|numeric',			),
 					array(),
-					$attributes		
+					$attributes
 			);
 
 		if ($validation->passes())
@@ -418,10 +536,10 @@ class OrdersController extends \BaseController {
 			Input::all(),
 			array(
 					'breakfast' => 'required|numeric',
-					'lunch' => 'required|numeric',	
+					'lunch' => 'required|numeric',
 					'dinner' => 'required|numeric',			),
 					array(),
-					$attributes		
+					$attributes
 			);
 
 		if ($validation->passes())
@@ -485,10 +603,10 @@ class OrdersController extends \BaseController {
 			Input::all(),
 			array(
 					'breakfast' => 'required',
-					'lunch' => 'required',	
+					'lunch' => 'required',
 					'dinner' => 'required',			),
 					array(),
-					$attributes	
+					$attributes
 			);
 
 		if ($validation->passes())
@@ -552,7 +670,7 @@ class OrdersController extends \BaseController {
 			return Response::json(array(
 		        'data' => array($list->toArray()),
 		        'totalCount'=> count($list)
-			));	
+			));
 	}
 
 	/**
@@ -575,7 +693,7 @@ class OrdersController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//	
+		//
 		return View::make('orders.edit')->with('order', Order::find($id));
 	}
 
@@ -596,10 +714,10 @@ class OrdersController extends \BaseController {
 			Input::all(),
 			array(
 					'breakfast' => 'required',
-					'lunch' => 'required',	
+					'lunch' => 'required',
 					'dinner' => 'required',			),
 					array(),
-					$attributes	
+					$attributes
 			);
 
 		if ($validation->passes())

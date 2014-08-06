@@ -10,7 +10,6 @@
 | and give it the Closure to execute when that URI is requested.
 |
 */
-
 Route::get('/', array('as'=>'home',function()
 {
 	return View::make('hello');
@@ -69,6 +68,10 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('admin/profile', array('as'=>'admin.profile.post', 'uses'=>'UsersController@postProfile'));
 	Route::get('order/search', array('as'=>'order.search', 'uses'=>'OrdersController@searchList'));
 	Route::post('order/search', array('as'=>'order.search.post', 'uses'=>'OrdersController@searchList'));
+	Route::get('order/setdate', array('as'=>'order.setdate', 'uses'=>'OrdersController@setdateList'));
+	Route::post('order/setdate', array('as'=>'order.setdate.post', 'uses'=>'OrdersController@setdateList'));
+	Route::get('order/count', array('as'=>'order.count', 'uses'=>'OrdersController@countList'));
+	Route::post('order/count', array('as'=>'order.count.post', 'uses'=>'OrdersController@countList'));
 	Route::get('order/today', array('as'=>'order.today', 'uses'=>'OrdersController@getToday'));
 	Route::get('order/todaylist', array('as'=>'order.todaylist', 'uses'=>'OrdersController@getTodayList'));
 });
