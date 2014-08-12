@@ -1,0 +1,628 @@
+#-+-+-+-+-+-+-+-+-+-+ id: 19 --- ftp name: 51lianyingcomcn --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   51lianying.com www.51lianying.com  51lianying.cn www.51lianying.cn;
+
+	listen       80;
+
+	 if ($host !~ ^(19.lum|211.155.232.215|51lianying.com|www.51lianying.com|51lianying.cn|www.51lianying.cn)$) {
+		 return 403;
+	 }
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+        
+           if ($host = '51lianying.com' ) {
+            rewrite ^/(.*)$  http://www.51lianying.com/$1   permanent;
+        }
+		  
+        rewrite "^/(index|case|channel|contact|news).html$" /index.php?r=site/$1 last;
+        rewrite "^/news-(\d+).html$" /index.php?r=site/newsInfo&id=$1 last;
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/19_error.log info;
+	access_log		/home/hosts_log/19_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	 root   /home/ftp/1520/51lianyingcomcn-20140521-yIJ/51lianying.com.cn/;
+
+	 ssi off;
+	 ssi_silent_errors off;
+	 ssi_types text/shtml;
+
+	location / {
+
+		 index  index.html index.htm index.shtml index.php;
+		 autoindex	off;
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+	 location ~* \.(php[3-9]?|phtm[l]?)(\/.*)*$ {
+		  proxy_pass http://19.lum:8889;
+
+		 if ($request_filename ~* (.*)\.(php[3-9]?|phtm[l]?)) {
+		     set $lum_php_filename $1.$2;
+		 }
+		 if (!-f $lum_php_filename) {
+		     return 403;
+		 }
+
+	 }
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 17 --- ftp name: 51lianying_com --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   backend.51lianying.com ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/17_error.log info;
+	access_log		/home/hosts_log/17_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	 root   /home/ftp/1520/51lianying_com-20140224-ldK/backend.51lianying.com/webroot/;
+
+	 ssi off;
+	 ssi_silent_errors off;
+	 ssi_types text/shtml;
+
+	location / {
+
+		 index  index.html index.htm index.shtml index.php;
+		 autoindex	off;
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+	 location ~* \.(php[3-9]?|phtm[l]?)(\/.*)*$ {
+		  proxy_pass http://17.lum:8889;
+
+		 if ($request_filename ~* (.*)\.(php[3-9]?|phtm[l]?)) {
+		     set $lum_php_filename $1.$2;
+		 }
+		 if (!-f $lum_php_filename) {
+		     return 403;
+		 }
+
+	 }
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 16 --- ftp name: 51lianying_com --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   www.51lianying.com.cn 51lianying.com.cn ;
+
+	listen       80;
+
+	gzip off;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+           if ($host = '51lianying.com' ) {
+            rewrite ^/(.*)$  http://www.51lianying.com.cn/$1   permanent;
+        }
+		  
+        rewrite "^/(index|case|channel|contact).html$" /index.php?r=site/$1 last;
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/16_error.log info;
+	access_log		/home/hosts_log/16_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	 root   /home/ftp/1520/51lianying_com-20140224-ldK/51lianying.com/;
+
+	 ssi off;
+	 ssi_silent_errors off;
+	 ssi_types text/shtml;
+
+	location / {
+
+		 index  index.html index.htm index.shtml index.php;
+		 autoindex	off;
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+	 location ~* \.(php[3-9]?|phtm[l]?)(\/.*)*$ {
+		  proxy_pass http://16.lum:8889;
+
+		 if ($request_filename ~* (.*)\.(php[3-9]?|phtm[l]?)) {
+		     set $lum_php_filename $1.$2;
+		 }
+		 if (!-f $lum_php_filename) {
+		     return 403;
+		 }
+
+	 }
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 15 --- ftp name: admin_zc --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   chinaxmt.org www.chinaxmt.org ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/15_error.log info;
+	access_log		/home/hosts_log/15_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	location / {
+
+		  proxy_pass http://15.lum:8889;
+
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 14 --- ftp name: admin_zc --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   chinabms.org www.chinabms.org ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/14_error.log info;
+	access_log		/home/hosts_log/14_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	 root   /home/ihiyou/ihiyou.com/gang/bms/chinabms/;
+
+	 ssi off;
+	 ssi_silent_errors off;
+	 ssi_types text/shtml;
+
+	location / {
+
+		 index  index.html index.htm index.shtml index.php;
+		 autoindex	off;
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+	 location ~* \.(php[3-9]?|phtm[l]?)(\/.*)*$ {
+
+		  fastcgi_pass 127.0.0.1:8999;
+
+		 if ($request_filename ~* (.*)\.(php[3-9]?|phtm[l]?)) {
+		     set $lum_php_filename $1.$2;
+		 }
+		 if (!-f $lum_php_filename) {
+		     return 403;
+		 }
+
+		  include enable_php.conf;
+	 }
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 13 --- ftp name: admin_zc --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   coroo.net www.coroo.net ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	 if ($host != www.ihiyou.com) {
+		 rewrite ^/(.*)$ http://www.ihiyou.com/$1 permanent;
+	 }
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/13_error.log info;
+	access_log		/home/hosts_log/13_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	location / {
+
+		  proxy_pass http://13.lum:8889;
+
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 12 --- ftp name: admin_zc --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   admin.ihiyou.com ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/12_error.log info;
+	access_log		/home/hosts_log/12_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	location / {
+
+		  proxy_pass http://12.lum:8889;
+
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 11 --- ftp name:  --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   m.ihiyou.com ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/11_error.log info;
+	access_log		/home/hosts_log/11_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	location / {
+
+		  proxy_pass http://11.lum:8889;
+
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 8 --- ftp name: admin_zc --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   ihiyou.com www.ihiyou.com ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/8_error.log info;
+	access_log		/home/hosts_log/8_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	location / {
+
+		  proxy_pass http://8.lum:8889;
+
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}
+
+#-+-+-+-+-+-+-+-+-+-+ id: 7 --- ftp name: admin_zc --- user: zijidelu +-+-+-+-+-+-+-+-+-+
+
+server {
+	server_name   *.ihiyou.com ;
+
+	listen       80;
+
+	gzip on;
+
+	add_header Thanks 'Welcome to our website!';
+
+	if (-d $request_filename) {
+
+		rewrite ^/(.*)([^/])$ $scheme://$host/$1$2/ permanent;
+	}
+
+	include proxy_pass.conf;
+	 proxy_set_header Host $host;
+
+	error_log		/home/hosts_log/7_error.log info;
+	access_log		/home/hosts_log/7_access.log lu_access_log_1;
+
+	 error_page 403 /__ErrorFiles__/403.html;
+	 error_page 404 /__ErrorFiles__/404.html;
+
+	 error_page 500 /__ErrorFiles__/500.html;
+	 error_page 501 /__ErrorFiles__/501.html;
+	 error_page 502 /__ErrorFiles__/502.html;
+
+	location / {
+
+		  proxy_pass http://7.lum:8889;
+
+	}
+
+	location /nginx_status {
+		stub_status on;
+		access_log off;
+	}
+
+	#------------
+
+	location ~ /\.ht {
+		return 403;
+	}
+
+	location ~ (favicon.ico) { 
+
+		log_not_found off;
+		access_log   off; 
+	}
+
+}

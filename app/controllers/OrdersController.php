@@ -408,28 +408,7 @@ class OrdersController extends \BaseController {
 		}
 		//班次
 		$department = Department::where('co_id', Auth::user()->id)->get();
-		//考勤日
-		$workdate_res = Workdate::where('co_id', Auth::user()->id)->where('ymd','like',$today.'-%')->orderBy('ymd','asc')->get();
-		if(count($workdate_res)>0){
-			foreach ($workdate_res as $key => $val){
-				$workdate[$val->ymd]=array(
-					'ymd'=>$val->ymd,
-					'is_work'=>$val->is_work
-				);
-			}
-		}else{
-			//如果管理员没设置考勤日，就默认使用工作日
-			for ($i=1;$i<=$day_num;$i++){
-				$i=$i<10?'0'.$i:$i;
-				$w=date("w",strtotime($today.'-'.$i));
-				if(!in_array($w, array(6,0))){
-					$workdate[$today.'-'.$i]=array(
-							'ymd'=>$today.'-'.$i,
-							'is_work'=>1
-					);
-				}
-			}
-		}
+		$workdate=$this->Workdate($today.'-%');
 
 		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', 'like', $today.'-%')->orderBy('worked_at', 'asc')->get();
 		//上班
@@ -469,6 +448,79 @@ class OrdersController extends \BaseController {
 		}
 		//var_dump($user);exit;
 		return View::make('orders.count')->with('today', $today)->with('users', $user)->with('num_count', count($workdate)*2);
+	}
+
+	public function detailmonth(){
+		$today = Input::get('date');
+		$user_id = Input::get('user_id');
+		$day_num = date('t',strtotime($today));
+		$user=array();
+		//班次
+		$department = Department::where('co_id', Auth::user()->id)->get();
+		$workdate=$this->Workdate($today.'-%');
+
+		//上班
+		$order = Order::where('co_id', Auth::user()->id)->where('user_id', '=', $user_id)->where('worked_at', 'like', $today.'-%')->orderBy('worked_at', 'asc')->get();
+		foreach ($order as $value) {
+			$ymd = date('Y-m-d', strtotime($value->worked_at));
+			$his = date('H:i:s', strtotime($value->worked_at));
+			if(isset($user[$ymd]['am'])) continue;
+			if ($his < '12:00:00') {
+				$user[$ymd]['am']['worked_at']=$value->worked_at;
+				if(punch($his, $department)){
+					$user[$ymd]['am']['type']=0;
+				}else{
+					$user[$ymd]['am']['type']=1;
+				}
+			}
+		}
+		//下班
+		$order = Order::where('co_id', Auth::user()->id)->where('user_id', '=', $user_id)->where('worked_at', 'like', $today.'-%')->orderBy('worked_at', 'desc')->get();
+		foreach ($order as $value) {
+			$ymd = date('Y-m-d', strtotime($value->worked_at));
+			$his = date('H:i:s', strtotime($value->worked_at));
+			if(isset($user[$ymd]['pm'])) continue;
+			if ($his >= '12:00:00') {
+				$user[$ymd]['pm']['worked_at']=$value->worked_at;
+				if(punch($his, $department)){
+					$user[$ymd]['pm']['type']=0;
+				}else{
+					$user[$ymd]['pm']['type']=1;
+				}
+			}
+		}
+		echo json_encode(array('user'=>$user,'workdate'=>$workdate));exit;
+	}
+
+	protected function Workdate($today){
+		$workdate=array();
+		$weekarray=array("日","一","二","三","四","五","六");
+		//考勤日
+		$workdate_res = Workdate::where('co_id', Auth::user()->id)->where('ymd','like',$today)->orderBy('ymd','asc')->get();
+		if(count($workdate_res)>0){
+			foreach ($workdate_res as $key => $val){
+				$w=date("w",strtotime($val->ymd));
+				$workdate[$val->ymd]=array(
+					'ymd'=>$val->ymd,
+					'work'=>'星期'.$weekarray[$w],
+					'is_work'=>$val->is_work
+				);
+			}
+		}else{
+			//如果管理员没设置考勤日，就默认使用工作日
+			for ($i=1;$i<=$day_num;$i++){
+				$i=$i<10?'0'.$i:$i;
+				$w=date("w",strtotime($today.'-'.$i));
+				if(!in_array($w, array(6,0))){
+					$workdate[$today.'-'.$i]=array(
+						'ymd'=>$today.'-'.$i,
+						'work'=>'星期'.$weekarray[$w],
+						'is_work'=>1
+					);
+				}
+			}
+		}
+		return $workdate;
 	}
 
 	public function orderList($co_id)

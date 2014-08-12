@@ -72,6 +72,8 @@ Route::group(array('before' => 'auth'), function()
 	Route::post('order/setdate', array('as'=>'order.setdate.post', 'uses'=>'OrdersController@setdateList'));
 	Route::get('order/count', array('as'=>'order.count', 'uses'=>'OrdersController@countList'));
 	Route::post('order/count', array('as'=>'order.count.post', 'uses'=>'OrdersController@countList'));
+	Route::get('order/detailmonth', array('as'=>'order.detailmonth', 'uses'=>'OrdersController@detailmonth'));
+	Route::post('order/detailmonth', array('as'=>'order.detailmonth.post', 'uses'=>'OrdersController@detailmonth'));
 	Route::get('order/today', array('as'=>'order.today', 'uses'=>'OrdersController@getToday'));
 	Route::get('order/todaylist', array('as'=>'order.todaylist', 'uses'=>'OrdersController@getTodayList'));
 });

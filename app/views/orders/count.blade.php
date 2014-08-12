@@ -24,6 +24,7 @@
 				<th>正常打卡(次)</th>
 				<th>迟到或早退(次)</th>
 				<th>未打卡(次)</th>
+				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -32,7 +33,7 @@
 				<tr>
 					<td>{{ $user['user_id'] }}</td>
 					<td>{{ $user['sn'] }}</td>
-					<td>{{ $user['name'] }}</td>
+					<td><a href="javascript:;" data-toggle="modal" data-target=".show_detail">{{ $user['name'] }}</a></td>
 					<td>{{ $user['phone'] }}</td>
 					<td class="normal" data-count="{{ $user['normal'] }}">
 						<span class="label label-success">{{ $user['normal'] }}</span>
@@ -43,13 +44,32 @@
 					<td class="no_records" data-count="{{ $user['no_records'] }}">
 						<span class="label <?php echo $user['no_records']>0 ? 'label-important' : 'label-success'?>">{{ $user['no_records'] }}</span>
 					</td>
+					<td><a href="javascript:;" data-toggle="modal" onclick="detailMonth('<?php echo $user['user_id']?>','{{ $user['name'] }}');" data-target=".show_detail">详情</a></td>
 				</tr>
 			@endforeach
 		</tbody>
 	</table>
+	<div class="modal fade show_detail" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+	    	<div class="modal-content" style="width:100%;height:500px;overflow: auto;padding:5px;">
+	      		<table class="table table-striped count-table">
+					<thead>
+						<tr>
+							<th>日期</th>
+							<th>姓名</th>
+							<th>星期</th>
+							<th>早上</th>
+							<th>下午</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+	    	</div>
+		</div>
+	</div>
 	<script>
 		J(function(){
-		    J('.input-medium').calendar({ btnBar:true,format:'yyyy-MM' });
+		    J('.input-medium').calendar({ btnBar:true,format:'yyyy-MM'});
 		});
 		$(function(){
 			var late_count=0,normal_count=0;
@@ -64,5 +84,38 @@
 			});
 			$('.count_text').html(' 当前月份，迟到、早退或未打卡'+late_count+'人<br/> 全勤'+normal_count+'人');
 		});
+		function detailMonth(user_id,name){
+			var date='{{$today}}';
+			$.post("{{ URL::route('order.detailmonth') }}", { "date": date,"user_id":user_id },
+			   function(data){
+				   var html='';
+			    	if(!$.isEmptyObject(data.workdate)){
+						$.each(data.workdate,function(i,n){console.info(data.user);
+							var am='';
+							var pm='';
+							if($.type(data.user[n.ymd]) != 'undefined' && $.type(data.user[n.ymd].am) != 'undefined'){
+								if(data.user[n.ymd].am.type == 1){
+									am='<span class="label label-success">'+data.user[n.ymd].am.worked_at+'</span>';
+								}else{
+									am='<span class="label label-warning">'+data.user[n.ymd].am.worked_at+'</span>';
+								}
+							}else{
+								am='<span class="label label-important">未打卡</span>';
+							}
+							if($.type(data.user[n.ymd]) != 'undefined' && $.type(data.user[n.ymd].pm) != 'undefined'){
+								if(data.user[n.ymd].pm.type == 1){
+									pm='<span class="label label-success">'+data.user[n.ymd].pm.worked_at+'</span>';
+								}else{
+									pm='<span class="label label-warning">'+data.user[n.ymd].pm.worked_at+'</span>';
+								}
+							}else{
+								pm='<span class="label label-important">未打卡</span>';
+							}
+							html+='<tr><td>'+n.ymd+'</td><td>'+name+'</td><td>'+n.work+'</td><td>'+am+'</td><td>'+pm+'</td></tr>'
+						});
+				    }
+				    $('.show_detail tbody').html(html);
+			}, "json");
+		}
 	</script>
 @stop
