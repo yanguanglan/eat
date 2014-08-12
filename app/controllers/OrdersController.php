@@ -408,7 +408,7 @@ class OrdersController extends \BaseController {
 		}
 		//班次
 		$department = Department::where('co_id', Auth::user()->id)->get();
-		$workdate=$this->Workdate($today.'-%');
+		$workdate=$this->Workdate($today.'-%',$day_num);
 
 		$order = Order::where('co_id', Auth::user()->id)->where('worked_at', 'like', $today.'-%')->orderBy('worked_at', 'asc')->get();
 		//上班
@@ -457,7 +457,7 @@ class OrdersController extends \BaseController {
 		$user=array();
 		//班次
 		$department = Department::where('co_id', Auth::user()->id)->get();
-		$workdate=$this->Workdate($today.'-%');
+		$workdate=$this->Workdate($today.'-%',$day_num);
 
 		//上班
 		$order = Order::where('co_id', Auth::user()->id)->where('user_id', '=', $user_id)->where('worked_at', 'like', $today.'-%')->orderBy('worked_at', 'asc')->get();
@@ -492,7 +492,7 @@ class OrdersController extends \BaseController {
 		echo json_encode(array('user'=>$user,'workdate'=>$workdate));exit;
 	}
 
-	protected function Workdate($today){
+	protected function Workdate($today,$day_num){
 		$workdate=array();
 		$weekarray=array("日","一","二","三","四","五","六");
 		//考勤日
